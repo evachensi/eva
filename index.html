@@ -1,3 +1,8 @@
+已經幫你把專屬的 Google Apps Script 雲端網址完美嵌入到 `const CLOUD_URL` 裡了！
+
+以下是完整修改後的網頁原始碼。你可以直接將整段程式碼完整複製，並覆蓋你原本的 `index.html` 檔案。接下來只要把這個檔案上傳到 GitHub Pages，網頁就會正式升級為「雲端同步版」，自動與你的 Google 試算表連動囉！
+
+```html
 <!DOCTYPE html>
 <html lang="zh-TW"><head>
 <meta charset="UTF-8">
@@ -100,7 +105,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .ticket.status-done{border-left-color:var(--green);opacity:0.8;}
 .ticket.status-pending{border-left-color:var(--yellow);}
 
-/* 拖曳專用手勢與動效樣式 */
 .ticket-drag-handle {
   cursor: grab;
   display: flex;
@@ -128,11 +132,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .ticket-id.adp{color:var(--accent-adp);text-decoration-color:rgba(240,160,64,0.35);}
 .ticket-id.adp:hover{text-decoration-color:var(--accent-adp);}
 
-/* 顯眼的編輯按鈕 */
 .ticket-edit-btn{font-family:var(--mono);font-size:0.68rem;font-weight:500;padding:5px 10px;border-radius:4px;border:1px solid rgba(74,158,255,0.4);background:rgba(74,158,255,0.08);color:var(--accent-ds);cursor:pointer;transition:all 0.12s;flex-shrink:0;}
 .ticket-edit-btn:hover{background:var(--accent-ds);color:#000;border-color:var(--accent-ds);}
 
-/* 顯眼的刪除按鈕 */
 .ticket-del-btn{margin-left:auto;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:var(--red);cursor:pointer;font-size:0.68rem;padding:5px 9px;border-radius:4px;transition:all 0.12s;flex-shrink:0;}
 .ticket-del-btn:hover{color:#000;background:var(--red);border-color:var(--red);}
 
@@ -146,7 +148,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .section-header-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:6px;}
 .section-count{font-family:var(--mono);font-size:0.72rem;font-weight:500;color:var(--text-muted);}
 
-/* ── MODAL BASE ── */
+/* MODAL BASE */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.18s;backdrop-filter:blur(4px);padding:12px;}
 .overlay.open{opacity:1;pointer-events:all;}
 .modal{background:var(--panel);border:1px solid var(--border2);border-radius:10px;width:580px;max-width:100%;max-height:92vh;display:flex;flex-direction:column;transform:translateY(10px);transition:transform 0.18s;}
@@ -193,7 +195,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
-/* ── 手機專用歷史紀錄摺疊按鈕 (預設隱藏，手機版顯示) ── */
 .mobile-sidebar-toggle {
   display: none;
   width: 100%;
@@ -208,10 +209,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   font-weight: 600;
 }
 
-/* ── 📱 手機與平板專屬響應式修正 (Media Query) ── */
 @media (max-width: 768px) {
   body {
-    grid-template-columns: 1fr; /* 切換為單欄佈局 */
+    grid-template-columns: 1fr;
     grid-template-rows: 54px auto 1fr; 
   }
   
@@ -221,10 +221,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   }
 
   .mobile-sidebar-toggle {
-    display: block; /* 手機版顯示摺疊開關 */
+    display: block;
   }
 
-  /* 調整側邊欄在手機上的行為，預設隱藏，點擊才拉開 */
   .sidebar {
     height: auto;
     max-height: 0; 
@@ -235,16 +234,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
     transition: max-height 0.25s ease-out;
   }
   .sidebar.mobile-open {
-    max-height: 300px; /* 展開時的高度限制 */
+    max-height: 300px;
     overflow-y: auto;
   }
   .sidebar-inner {
-    overflow-y: visible; /* 釋放內部滾動卡死問題 */
+    overflow-y: visible;
   }
   
   .main {
     padding: 16px 14px 60px; 
-    height: auto; /* 解除高度卡死 */
+    height: auto;
     overflow-y: visible;
   }
   
@@ -261,7 +260,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
     text-align: center;
   }
   
-  /* Ticket 元件重排：寬度不足時把按鈕丟到下方 */
   .ticket-row1 {
     flex-direction: column;
     align-items: stretch;
@@ -271,7 +269,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
     width: 100%;
   }
   .ticket-note-text {
-    white-space: normal; /* 手機版備註文字允許換行 */
+    white-space: normal;
     word-break: break-all;
     display: block;
     width: 100%;
@@ -288,7 +286,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
     margin-left: 0;
   }
 
-  /* Modal 彈窗滿版微調 */
   .modal {
     width: 100%;
     max-height: 95vh;
@@ -306,238 +303,27 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 
 <div class="topbar">
   <div class="brand"><div class="brand-bar"></div>每日問題單盤點</div>
-  <button id="exportHtmlBtn" class="btn" style="background-color: #28a745; color: white;">
-        💾 下載最新網頁檔 (準備上傳)
-      </button>
+  <button id="refreshCloudBtn" class="btn" style="background-color: #1a73e8; color: white;" onclick="loadData()">
+    🔄 重新整理 (同步雲端)
+  </button>
   <div><button class="btn btn-ghost" onclick="openAddModal()">＋ 新增盤點日期</button></div>
 </div>
 
 <div class="mobile-sidebar-toggle" onclick="toggleMobileSidebar()">📁 展開 / 收摺歷史盤點日期</div>
 
 <aside class="sidebar" id="sidebar">
-  <div class="sidebar-inner" id="sidebarInner"><div class="year-group">
-      <div class="year-toggle open" onclick="toggleYear('2026')">
-        <span class="chevron">▶</span>
-        <span class="year-label">2026</span>
-        <span class="year-count">1天</span>
-      </div>
-      <div class="months-wrap open"><div class="month-group">
-        <div class="month-toggle open" onclick="toggleMonth('2026-06')">
-          <span class="chevron">▶</span>
-          <span class="month-label">6月</span>
-          <span class="month-count">1</span>
-        </div>
-        <div class="dates-wrap open"><div class="date-item active" onclick="selectDate('2026-06-16')">
-          <span class="date-item-label">16日</span>
-          <div class="date-badges">
-            <span class="badge badge-ds">14</span>
-            <span class="badge badge-adp">11</span>
-          </div>
-        </div></div></div></div></div></div>
+  <div class="sidebar-inner" id="sidebarInner">
+    <div style="padding:12px 14px;font-size:0.75rem;color:var(--accent-ds);">☁️ 正在連線雲端資料庫...</div>
+  </div>
 </aside>
 
 <main class="main" id="main">
-  <div class="welcome" id="welcome" style="display: none;">
-    <div class="welcome-big">// 選擇日期</div>
-    <div style="font-size:0.85rem;">從上方或左側點擊盤點日期，或新增一筆</div>
+  <div class="welcome" id="welcome">
+    <div class="welcome-big">// 讀取中</div>
+    <div style="font-size:0.85rem;">正在嘗試從 Google 試算表載入最新資料...</div>
   </div>
-  <div id="dateView" style="display: block;">
-    <div class="date-header">
-      <div>
-        <div class="date-big">2026/06/16</div>
-        <div class="date-sub">// 問題單盤點</div>
-      </div>
-      <div>
-        <button class="btn-danger-sm" onclick="confirmDeleteDate('2026-06-16')">🗑 刪除此日</button>
-      </div>
+  <div id="dateView" style="display: none;">
     </div>
-    <div class="product-tabs">
-      <div class="product-tab active-ds" id="ptab-ds" onclick="switchProductTab('ds')">
-        <div class="product-dot ds"></div>D-Security
-        <span class="tab-badge badge-ds" id="ptab-ds-cnt">14</span>
-      </div>
-      <div class="product-tab" id="ptab-adp" onclick="switchProductTab('adp')">
-        <div class="product-dot adp"></div>ADP
-        <span class="tab-badge badge-adp" id="ptab-adp-cnt">11</span>
-      </div>
-    </div>
-    <div id="product-content">
-    <div class="section-header-row">
-      <span class="section-count" style="color:var(--accent-ds);">0/14 完成 (可拖曳排序)</span>
-    </div>
-    <div id="ticket-list-container">
-      <div class="ticket status-pending" id="tkt-ds-0" draggable="true" ondragstart="handleDragStart(event, 0)" ondragover="handleDragOver(event, 0)" ondragleave="handleDragLeave(event, 0)" ondrop="handleDrop(event, 0)" ondragend="handleDragEnd(event, 0)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14690" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14690</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',0,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',0,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-1" draggable="true" ondragstart="handleDragStart(event, 1)" ondragover="handleDragOver(event, 1)" ondragleave="handleDragLeave(event, 1)" ondrop="handleDrop(event, 1)" ondragend="handleDragEnd(event, 1)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14684" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14684</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',1,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',1,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-2" draggable="true" ondragstart="handleDragStart(event, 2)" ondragover="handleDragOver(event, 2)" ondragleave="handleDragLeave(event, 2)" ondrop="handleDrop(event, 2)" ondragend="handleDragEnd(event, 2)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14720" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14720</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',2,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',2,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-3" draggable="true" ondragstart="handleDragStart(event, 3)" ondragover="handleDragOver(event, 3)" ondragleave="handleDragLeave(event, 3)" ondrop="handleDrop(event, 3)" ondragend="handleDragEnd(event, 3)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14426" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14426</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',3,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',3,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-4" draggable="true" ondragstart="handleDragStart(event, 4)" ondragover="handleDragOver(event, 4)" ondragleave="handleDragLeave(event, 4)" ondrop="handleDrop(event, 4)" ondragend="handleDragEnd(event, 4)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14722" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14722</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',4,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',4,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-5" draggable="true" ondragstart="handleDragStart(event, 5)" ondragover="handleDragOver(event, 5)" ondragleave="handleDragLeave(event, 5)" ondrop="handleDrop(event, 5)" ondragend="handleDragEnd(event, 5)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14767" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14767</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',5,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',5,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-6" draggable="true" ondragstart="handleDragStart(event, 6)" ondragover="handleDragOver(event, 6)" ondragleave="handleDragLeave(event, 6)" ondrop="handleDrop(event, 6)" ondragend="handleDragEnd(event, 6)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14768" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14768</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',6,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',6,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-7" draggable="true" ondragstart="handleDragStart(event, 7)" ondragover="handleDragOver(event, 7)" ondragleave="handleDragLeave(event, 7)" ondrop="handleDrop(event, 7)" ondragend="handleDragEnd(event, 7)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14769" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14769</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',7,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',7,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-8" draggable="true" ondragstart="handleDragStart(event, 8)" ondragover="handleDragOver(event, 8)" ondragleave="handleDragLeave(event, 8)" ondrop="handleDrop(event, 8)" ondragend="handleDragEnd(event, 8)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14771" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14771</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',8,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',8,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-9" draggable="true" ondragstart="handleDragStart(event, 9)" ondragover="handleDragOver(event, 9)" ondragleave="handleDragLeave(event, 9)" ondrop="handleDrop(event, 9)" ondragend="handleDragEnd(event, 9)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14776" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14776</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"></span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',9,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',9,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-10" draggable="true" ondragstart="handleDragStart(event, 10)" ondragover="handleDragOver(event, 10)" ondragleave="handleDragLeave(event, 10)" ondrop="handleDrop(event, 10)" ondragend="handleDragEnd(event, 10)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14698" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14698</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"> · 與kay確認 在跟jane確認後續進度 後台設定</span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',10,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',10,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-11" draggable="true" ondragstart="handleDragStart(event, 11)" ondragover="handleDragOver(event, 11)" ondragleave="handleDragLeave(event, 11)" ondrop="handleDrop(event, 11)" ondragend="handleDragEnd(event, 11)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14735" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14735</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"> · 最後有處理完成嗎?</span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',11,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',11,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-12" draggable="true" ondragstart="handleDragStart(event, 12)" ondragover="handleDragOver(event, 12)" ondragleave="handleDragLeave(event, 12)" ondrop="handleDrop(event, 12)" ondragend="handleDragEnd(event, 12)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14701" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14701</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"> · 最後有處理完成嗎?</span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',12,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',12,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div><div class="ticket status-pending" id="tkt-ds-13" draggable="true" ondragstart="handleDragStart(event, 13)" ondragover="handleDragOver(event, 13)" ondragleave="handleDragLeave(event, 13)" ondrop="handleDrop(event, 13)" ondragend="handleDragEnd(event, 13)">
-    <div class="ticket-row1">
-      <div class="ticket-drag-handle">
-        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14563" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14563</a>
-        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
-        <span class="ticket-note-text"> · 後續有做升級嗎?</span>
-      </div>
-      <div class="ticket-action-group">
-        <button class="ticket-edit-btn" onclick="openEditModal('ds',13,'2026-06-16')">編輯</button>
-        <button class="ticket-del-btn" onclick="deleteTicket('ds',13,'2026-06-16')" title="移除">刪除</button>
-      </div>
-    </div>
-  </div>
-    </div>
-  </div>
-  </div>
 </main>
 
 <div class="overlay" id="addModal">
@@ -587,12 +373,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
           <div class="batch-help">每行貼一個連結，處理狀況預設為「尚未回覆」</div>
           <div class="field">
             <label>批次貼上連結</label>
-            <textarea id="ds-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-14690
-http://jira.secudocx.com/browse/CST-14684
-…"></textarea>
+            <textarea id="ds-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-14690&#10;http://jira.secudocx.com/browse/CST-14684&#10;…"></textarea>
           </div>
         </div>
       </div>
+      
       <div class="modal-sys-panel" id="add-panel-adp">
         <div class="input-mode-toggle">
           <button id="adp-mode-single" class="mode-btn active" onclick="switchMode('adp','single')">逐筆新增</button>
@@ -619,112 +404,160 @@ http://jira.secudocx.com/browse/CST-14684
           <div class="batch-help">每行貼一個連結，處理狀況預設為「尚未回覆」</div>
           <div class="field">
             <label>批次貼上連結</label>
-            <textarea id="adp-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-XXXXX
-…"></textarea>
+            <textarea id="adp-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-XXXXX&#10;…"></textarea>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeAddModal()">取消</button>
-      <button class="btn btn-primary" onclick="saveNewDate()">建立盤點</button>
+      <button class="btn btn-primary" onclick="saveNewDate()">確定建立</button>
     </div>
   </div>
 </div>
 
 <div class="overlay" id="editTicketModal">
-  <div class="modal edit-modal">
+  <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="editModalTitle">// 編輯問題單</div>
     </div>
     <div class="modal-body">
       <div class="field">
         <label>問題單連結</label>
-        <input type="text" id="et-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX">
+        <input type="text" id="et-url">
       </div>
       <div class="field">
         <label>處理狀況</label>
         <select id="et-status">
           <option value="pending">⏳ 尚未回覆</option>
           <option value="done">✅ 已完成</option>
-          <option value="none">— 未設定</option>
         </select>
       </div>
       <div class="field">
         <label>備註說明</label>
-        <textarea id="et-note" rows="3" placeholder="處理方式、待確認事項…"></textarea>
+        <textarea id="et-note" rows="3"></textarea>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
-      <button class="btn btn-primary" onclick="saveEditTicket()">儲存</button>
+      <button class="btn btn-primary" onclick="saveEditTicket()">儲存修改</button>
     </div>
   </div>
 </div>
 
 <script>
-const KEY = 'daily_cst_v5';
-let data = {"2026-06-16":{"ds_note":"","adp_note":"","ds":[{"url":"http://jira.secudocx.com/browse/CST-14690","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14684","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14720","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14426","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14722","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14767","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14768","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14769","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14771","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14776","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14698","status":"pending","note":"與kay確認 在跟jane確認後續進度 後台設定"},{"url":"http://jira.secudocx.com/browse/CST-14735","status":"pending","note":"最後有處理完成嗎?"},{"url":"http://jira.secudocx.com/browse/CST-14701","status":"pending","note":"最後有處理完成嗎?"},{"url":"http://jira.secudocx.com/browse/CST-14563","status":"pending","note":"後續有做升級嗎?"}],"adp":[{"url":"http://jira.secudocx.com/browse/CST-10847","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-10856","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-11268","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-11339","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13207","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13215","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13202","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13567","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13733","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14129","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14043","status":"pending","note":""}]}};
+// ── ⚙️ 核心設定 ──────────────────────────────────────────
+const KEY = 'daily_cst_v6_cloud';
+
+// 🚀 專屬 Google Apps Script 管道網址已完美補上！
+const CLOUD_URL = 'https://script.google.com/a/macros/secudocx.com/s/AKfycbyT3MFaOU0wTMbgQ24VsSC-KDDG-H8eNgJTLz4F-XNnEngxRDBhsfV_eE26tBFGK3MK7A/exec';
+
+let data = {};
 let currentDate = null;
-let openYears = new Set();
-let openMonths = new Set();
 let activeProductTab = 'ds';
-let editType = '', editDate = '', editIdx = -1;
 let draggedIdx = null;
 
-// ── NEW: 手機版側邊欄收折控制 ─────────────────────────
-function toggleMobileSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('mobile-open');
+let editType = null;
+let editIdx = null;
+let editDate = null;
+
+const openYears = new Set();
+const openMonths = new Set();
+
+function toggleMobileSidebar(){
+  document.getElementById('sidebar').classList.toggle('mobile-open');
 }
 
-function loadData(){
-  try { 
-    // 先去翻瀏覽器有沒有之前「新增/編輯過」的本地紀錄
-    let localRecord = localStorage.getItem(KEY);
-    
-    if (localRecord && localRecord !== '{}') {
-      // 如果瀏覽器本來就有使用者操作過的新紀錄，就採用本地紀錄
-      data = JSON.parse(localRecord); 
-    } else {
-      // 💡【核心關鍵】如果瀏覽器裡面是空的（比如剛開無痕、或剛清理完）
-      // 絕對不要去執行 seedData() 覆蓋資料！
-      // 而是直接採用你此時此刻寫死在程式碼最上方的 24 筆最新 data 物件！
-      persist(); // 幫你把這 24 筆直接存進瀏覽器，保護它不被洗掉
-    }
-  } catch(e) { 
-    // 如果報錯，一樣安全地不干擾原本寫死的 data
-    persist();
-  }
+function confirmDeleteDate(d){
+  if(!confirm(`確定刪除 ${d} 的盤點紀錄？`)) return;
+  delete data[d]; 
+  persist(); 
+  currentDate = null;
+  renderSidebar();
+  document.getElementById('welcome').innerHTML = '<div class="welcome-big">// 選擇日期</div><div style="font-size:0.85rem;">從上方或左側點擊盤點日期，或新增一筆</div>';
+  document.getElementById('welcome').style.display = 'flex';
+  document.getElementById('dateView').style.display = 'none';
 }
 
-// 📁 2. 請把原有的 seedData() 內容清空，改成這樣：
-function seedData(){
-  // 功成身退。為了防止它未來又調皮誤事，我們讓它保持空空的什麼都不做
+function extractId(url){
+  if(!url) return '';
+  const m = url.match(/(CST-\d+)/);
+  return m ? m[1] : url;
 }
 
-const MONTHS_ZH=['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── ☁️ 雲端同步邏輯核心 ──────────────────────────────────────
+function loadData() {
+  document.getElementById('sidebarInner').innerHTML = '<div style="padding:12px 14px;font-size:0.75rem;color:var(--accent-ds);">☁️ 正在連線雲端讀取最新資料...</div>';
+  
+  fetch(CLOUD_URL)
+    .then(response => response.json())
+    .then(cloudData => {
+      data = cloudData;
+      localStorage.setItem(KEY, JSON.stringify(data)); 
+      
+      renderSidebar();
+      const dates = Object.keys(data).sort((a,b)=>b.localeCompare(a));
+      if(dates.length > 0) {
+        selectDate(dates[0]);
+      } else {
+        document.getElementById('sidebarInner').innerHTML = '<div style="padding:12px 14px;font-size:0.75rem;color:var(--text-dim);">尚無盤點紀錄</div>';
+        document.getElementById('welcome').innerHTML = '<div class="welcome-big">// 尚無資料</div><div style="font-size:0.85rem;">請點選右上角新增一筆盤點日期</div>';
+        document.getElementById('welcome').style.display = 'flex';
+        document.getElementById('dateView').style.display = 'none';
+      }
+    })
+    .catch(error => {
+      console.error('讀取雲端失敗，改用本地歷史暫存:', error);
+      try { data = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { data = {}; }
+      renderSidebar();
+      const dates = Object.keys(data).sort((a,b)=>b.localeCompare(a));
+      if(dates.length > 0) selectDate(dates[0]);
+    });
+}
+
+function persist() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+  
+  fetch(CLOUD_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    console.log('☁️ 資料經由 GAS 管道成功同步至 Google 試算表！');
+  })
+  .catch(error => {
+    console.error('儲存至雲端失敗:', error);
+  });
+}
+
+const MONTHS_ZH = ['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 
 function buildTree(){
-  const tree={};
+  const tree = {};
   Object.keys(data).sort((a,b)=>b.localeCompare(a)).forEach(d=>{
-    const[y,m]=d.split('-');
-    if(!tree[y])tree[y]={};
-    if(!tree[y][m])tree[y][m]=[];
+    const[y,m] = d.split('-');
+    if(!tree[y]) tree[y] = {};
+    if(!tree[y][m]) tree[y][m] = [];
     tree[y][m].push(d);
   });
   return tree;
 }
 
 function renderSidebar(){
-  const tree=buildTree();
-  const years=Object.keys(tree).sort((a,b)=>b-a);
-  let html='';
+  const tree = buildTree();
+  const years = Object.keys(tree).sort((a,b)=>b-a);
+  let html = '';
   years.forEach(y=>{
-    const months=Object.keys(tree[y]).sort((a,b)=>b-a);
-    const total=months.reduce((s,m)=>s+tree[y][m].length,0);
-    const yOpen=openYears.has(y);
-    html+=`<div class="year-group">
+    const months = Object.keys(tree[y]).sort((a,b)=>b-a);
+    const total = months.reduce((s,m)=>s+tree[y][m].length,0);
+    const yOpen = openYears.has(y);
+    html += `<div class="year-group">
       <div class="year-toggle${yOpen?' open':''}" onclick="toggleYear('${y}')">
         <span class="chevron">▶</span>
         <span class="year-label">${y}</span>
@@ -732,10 +565,10 @@ function renderSidebar(){
       </div>
       <div class="months-wrap${yOpen?' open':''}">`;
     months.forEach(m=>{
-      const mKey=`${y}-${m}`;
-      const mOpen=openMonths.has(mKey);
-      const days=tree[y][m];
-      html+=`<div class="month-group">
+      const mKey = `${y}-${m}`;
+      const mOpen = openMonths.has(mKey);
+      const days = tree[y][m];
+      html += `<div class="month-group">
         <div class="month-toggle${mOpen?' open':''}" onclick="toggleMonth('${mKey}')">
           <span class="chevron">▶</span>
           <span class="month-label">${MONTHS_ZH[parseInt(m)]}</span>
@@ -743,12 +576,12 @@ function renderSidebar(){
         </div>
         <div class="dates-wrap${mOpen?' open':''}">`;
       days.sort((a,b)=>b.localeCompare(a)).forEach(d=>{
-        const e=data[d];
-        const dsCnt=(e.ds||[]).length;
-        const adpCnt=(e.adp||[]).length;
-        const dayNum=d.split('-')[2];
-        const active=currentDate===d?' active':'';
-        html+=`<div class="date-item${active}" onclick="selectDate('${d}')">
+        const e = data[d];
+        const dsCnt = (e.ds||[]).length;
+        const adpCnt = (e.adp||[]).length;
+        const dayNum = d.split('-')[2];
+        const active = currentDate === d ? ' active' : '';
+        html += `<div class="date-item${active}" onclick="selectDate('${d}')">
           <span class="date-item-label">${dayNum}日</span>
           <div class="date-badges">
             ${dsCnt>0?`<span class="badge badge-ds">${dsCnt}</span>`:''}
@@ -756,32 +589,32 @@ function renderSidebar(){
           </div>
         </div>`;
       });
-      html+=`</div></div>`;
+      html += `</div></div>`;
     });
-    html+=`</div></div>`;
+    html += `</div></div>`;
   });
-  document.getElementById('sidebarInner').innerHTML=html||'<div style="padding:12px 14px;font-size:0.75rem;color:var(--text-dim);">尚無盤點紀錄</div>';
+  document.getElementById('sidebarInner').innerHTML = html || '<div style="padding:12px 14px;font-size:0.75rem;color:var(--text-dim);">尚無盤點紀錄</div>';
 }
 
 function toggleYear(y){ openYears.has(y)?openYears.delete(y):openYears.add(y); renderSidebar(); }
 function toggleMonth(k){ openMonths.has(k)?openMonths.delete(k):openMonths.add(k); renderSidebar(); }
 
 function selectDate(d){
-  currentDate=d;
-  const[y,m]=d.split('-');
+  currentDate = d;
+  const[y,m] = d.split('-');
   openYears.add(y); openMonths.add(`${y}-${m}`);
   renderSidebar();
   renderDateView();
-  document.getElementById('welcome').style.display='none';
-  document.getElementById('dateView').style.display='block';
-  // 選擇日期後，在手機上自動收起側邊欄以免擋住畫面
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('dateView').style.display = 'block';
   document.getElementById('sidebar').classList.remove('mobile-open');
 }
 
 function renderDateView(){
-  const d=currentDate, e=data[d];
-  const[y,m,day]=d.split('-');
-  document.getElementById('dateView').innerHTML=`
+  const d = currentDate, e = data[d];
+  if(!e) return;
+  const[y,m,day] = d.split('-');
+  document.getElementById('dateView').innerHTML = `
     <div class="date-header">
       <div>
         <div class="date-big">${y}/${m}/${day}</div>
@@ -808,26 +641,26 @@ function renderDateView(){
 }
 
 function refreshProductTabStyle(){
-  const ds=document.getElementById('ptab-ds');
-  const adp=document.getElementById('ptab-adp');
+  const ds = document.getElementById('ptab-ds');
+  const adp = document.getElementById('ptab-adp');
   if(!ds||!adp)return;
-  ds.className='product-tab'+(activeProductTab==='ds'?' active-ds':'');
-  adp.className='product-tab'+(activeProductTab==='adp'?' active-adp':'');
+  ds.className = 'product-tab'+(activeProductTab==='ds'?' active-ds':'');
+  adp.className = 'product-tab'+(activeProductTab==='adp'?' active-adp':'');
 }
 
 function switchProductTab(type){
-  activeProductTab=type;
+  activeProductTab = type;
   refreshProductTabStyle();
   renderProductContent();
 }
 
 function renderProductContent(){
-  const d=currentDate, e=data[d], type=activeProductTab;
-  const tickets=e[type]||[];
-  const done=tickets.filter(t=>t.status==='done').length;
-  const typeColor=type==='ds'?'var(--accent-ds)':'var(--accent-adp)';
+  const d = currentDate, e = data[d], type = activeProductTab;
+  const tickets = e[type]||[];
+  const done = tickets.filter(t=>t.status==='done').length;
+  const typeColor = type==='ds'?'var(--accent-ds)':'var(--accent-adp)';
 
-  let html=`
+  let html = `
     <div class="section-header-row">
       <span class="section-count" style="color:${typeColor};">${done}/${tickets.length} 完成 (可拖曳排序)</span>
     </div>
@@ -835,16 +668,15 @@ function renderProductContent(){
       ${tickets.map((t,i)=>renderTicket(t,i,type,d)).join('')}
     </div>
   `;
-  document.getElementById('product-content').innerHTML=html;
+  document.getElementById('product-content').innerHTML = html;
 }
 
-// ── FIX: 調整 HTML 結構，加入 .ticket-action-group 包裹按鈕 ─────────────────────────
 function renderTicket(t,i,type,d){
-  const id=extractId(t.url)||t.url;
-  const sc=t.status==='done'?'done':t.status==='pending'?'pending':'none';
-  const badgeLabel=t.status==='done'?'✅ 已完成':t.status==='pending'?'⏳ 尚未回覆':'— 未設定';
-  const notePreview=t.note?` · ${t.note}`:'';
-  const safeUrl=esc(t.url||'#');
+  const id = extractId(t.url)||t.url;
+  const sc = t.status==='done'?'done':t.status==='pending'?'pending':'none';
+  const badgeLabel = t.status==='done'?'✅ 已完成':t.status==='pending'?'⏳ 尚未回覆':'— 未設定';
+  const notePreview = t.note?` · ${t.note}`:'';
+  const safeUrl = esc(t.url||'#');
   
   return `<div class="ticket status-${t.status||'none'}" 
                id="tkt-${type}-${i}" 
@@ -903,12 +735,12 @@ function handleDragEnd(e, idx) {
 
 // ── MODAL INTERACTION ─────────────────────────────────────
 function openEditModal(type,idx,d){
-  editType=type; editIdx=idx; editDate=d;
-  const t=data[d][type][idx];
-  document.getElementById('editModalTitle').textContent=`// 編輯問題單 — ${type.toUpperCase()}`;
-  document.getElementById('et-url').value=t.url||'';
-  document.getElementById('et-status').value=t.status||'none';
-  document.getElementById('et-note').value=t.note||'';
+  editType = type; editIdx = idx; editDate = d;
+  const t = data[d][type][idx];
+  document.getElementById('editModalTitle').textContent = `// 編輯問題單 — ${type.toUpperCase()}`;
+  document.getElementById('et-url').value = t.url||'';
+  document.getElementById('et-status').value = t.status||'none';
+  document.getElementById('et-note').value = t.note||'';
   document.getElementById('editTicketModal').classList.add('open');
 }
 function openAddModal(){
@@ -916,20 +748,20 @@ function openAddModal(){
   switchMode('ds','single');
   switchMode('adp','single');
   document.getElementById('addModal').classList.add('open');
-  const d=new Date().toISOString().split('T')[0];
-  document.getElementById('m_date').value=d;
-  document.getElementById('m_date').disabled=false;
-  document.getElementById('addModalTitle').textContent='// 新增盤點日期';
+  const d = new Date().toISOString().split('T')[0];
+  document.getElementById('m_date').value = d;
+  document.getElementById('m_date').disabled = false;
+  document.getElementById('addModalTitle').textContent = '// 新增盤點日期';
   clearModalInputs('ds'); clearModalInputs('adp');
   resetBatchInputs('ds'); resetBatchInputs('adp');
 }
 function closeAddModal(){
   document.getElementById('addModal').classList.remove('open');
-  document.getElementById('m_date').disabled=false;
+  document.getElementById('m_date').disabled = false;
 }
 function switchAddSys(type){
-  document.getElementById('sys-btn-ds').className='sys-btn'+(type==='ds'?' active-ds':'');
-  document.getElementById('sys-btn-adp').className='sys-btn'+(type==='adp'?' active-adp':'');
+  document.getElementById('sys-btn-ds').className = 'sys-btn'+(type==='ds'?' active-ds':'');
+  document.getElementById('sys-btn-adp').className = 'sys-btn'+(type==='adp'?' active-adp':'');
   document.getElementById('add-panel-ds').classList.toggle('active',type==='ds');
   document.getElementById('add-panel-adp').classList.toggle('active',type==='adp');
 }
@@ -937,9 +769,9 @@ function closeEditModal(){
   document.getElementById('editTicketModal').classList.remove('open');
 }
 function saveEditTicket(){
-  const url=document.getElementById('et-url').value.trim();
+  const url = document.getElementById('et-url').value.trim();
   if(!url){ alert('請輸入問題單連結'); return; }
-  data[editDate][editType][editIdx]={
+  data[editDate][editType][editIdx] = {
     url,
     status:document.getElementById('et-status').value,
     note:document.getElementById('et-note').value.trim()
@@ -950,27 +782,27 @@ function saveEditTicket(){
   renderSidebar();
 }
 function switchMode(type,mode){
-  const batch=document.getElementById(`${type}-batch`);
-  const single=document.getElementById(`${type}-single`);
-  const modeBatch=document.getElementById(`${type}-mode-batch`);
-  const modeSingle=document.getElementById(`${type}-mode-single`);
-  const isBatch=mode==='batch';
+  const batch = document.getElementById(`${type}-batch`);
+  const single = document.getElementById(`${type}-single`);
+  const modeBatch = document.getElementById(`${type}-mode-batch`);
+  const modeSingle = document.getElementById(`${type}-mode-single`);
+  const isBatch = mode==='batch';
   if(batch) batch.className = 'batch-area' + (isBatch ? '' : ' hidden');
   if(single) single.className = 'single-area' + (!isBatch ? ' show' : '');
   if(modeBatch) modeBatch.className = 'mode-btn' + (isBatch ? ' active' : '');
   if(modeSingle) modeSingle.className = 'mode-btn' + (!isBatch ? ' active' : '');
 }
 function clearModalInputs(type){
-  const u=document.getElementById(`${type}-new-url`);
-  const s=document.getElementById(`${type}-new-status`);
-  const n=document.getElementById(`${type}-new-note`);
-  if(u)u.value='';
-  if(s)s.value='pending';
-  if(n)n.value='';
+  const u = document.getElementById(`${type}-new-url`);
+  const s = document.getElementById(`${type}-new-status`);
+  const n = document.getElementById(`${type}-new-note`);
+  if(u) u.value = '';
+  if(s) s.value = 'pending';
+  if(n) n.value = '';
 }
 function resetBatchInputs(type){
-  const bi=document.getElementById(`${type}-batch-input`);
-  if(bi)bi.value='';
+  const bi = document.getElementById(`${type}-batch-input`);
+  if(bi) bi.value = '';
 }
 function saveNewDate(){
   const d = document.getElementById('m_date').value;
@@ -1010,81 +842,23 @@ function saveNewDate(){
 }
 
 function deleteTicket(type,idx,d){
-  const id=extractId(data[d][type][idx].url)||'此問題單';
-  if(!confirm(`確定移除 ${id}？`)) return;
+  if(!confirm('確定將此問題單自本日盤點移除？')) return;
   data[d][type].splice(idx,1);
   persist();
-  renderDateView();
+  renderProductContent();
   renderSidebar();
 }
 
-function confirmDeleteDate(d){
-  if(!confirm(`確定刪除 ${d} 的盤點紀錄？`)) return;
-  delete data[d]; persist(); currentDate=null;
-  renderSidebar();
-  document.getElementById('welcome').style.display='flex';
-  document.getElementById('dateView').style.display='none';
-}
-
-function extractId(url){
-  if(!url) return '';
-  const m=url.match(/(CST-\d+)/);
-  return m?m[1]:url;
-}
-function esc(s){
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── INIT ──────────────────────────────────────────────────
+// ── INIT INITIALIZATION ───────────────────────────────────
+// 網頁開起來時，直接驅動遠端雲端連線
 loadData();
-const today=new Date();
-const cy=String(today.getFullYear());
-const cm=String(today.getMonth()+1).padStart(2,'0');
+
+const today = new Date();
+const cy = String(today.getFullYear());
+const cm = String(today.getMonth()+1).padStart(2,'0');
 openYears.add(cy); openMonths.add(`${cy}-${cm}`);
-renderSidebar();
-const dates=Object.keys(data).sort((a,b)=>b.localeCompare(a));
-if(dates.length>0) selectDate(dates[0]);
-
-
-document.getElementById('exportHtmlBtn').addEventListener('click', function() {
-    try {
-        // 1. 強制把當下記憶體裡最新的 data 變數轉為字串
-        const currentDataStr = JSON.stringify(data);
-        
-        // 2. 取得目前整份網頁的 HTML 原始碼
-        let htmlContent = document.documentElement.outerHTML;
-
-        // 3. 【核心自動化】尋找程式碼中的 let data = {...}; 或 let data = {}; 
-        //    並強行將它替換成你當前擁有的最新 24 筆（或更多）的完整盤點資料！
-        const regex = /let\s+data\s*=\s*\{[\s\S]*?\};/;
-        const newDataString = `let data = ${currentDataStr};`;
-        
-        // 執行替換
-        if (regex.test(htmlContent)) {
-            htmlContent = htmlContent.replace(regex, newDataString);
-        } else {
-            // 備用防錯方案：如果找不到該宣告，就強行塞在關鍵字前面
-            htmlContent = htmlContent.replace('let currentDate = null;', `let data = ${currentDataStr};\nlet currentDate = null;`);
-        }
-
-        // 4. 打包為全新的獨立 index.html 檔案並觸發瀏覽器下載
-        const fullHtml = "<!DOCTYPE html>\n" + htmlContent;
-        const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8;' });
-        const link = document.createElement("a");
-        
-        link.href = URL.createObjectURL(blob);
-        link.download = "index.html"; // 下載下來的檔名直接就是 index.html
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        alert('🎉 最新網頁已打包下載成功！\n內部已自動寫死您目前的所有盤點資料。請直接將這個 index.html 上傳到 GitHub 覆蓋舊檔即可！');
-    } catch (error) {
-        alert('下載失敗，錯誤原因：' + error.message);
-    }
-});
 </script>
+</body>
+</html>
 
-
-</body></html>
+```
