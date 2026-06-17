@@ -1,15 +1,10 @@
-
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
+<html lang="zh-TW"><head>
 <meta charset="UTF-8">
 
-<button id="exportHtmlBtn" style="background-color: #28a745; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
-  💾 下載最新靜態網頁檔 (準備上傳 GitHub)
-</button>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>每日問題單盤點</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Noto+Sans+TC:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0e1117;
@@ -311,21 +306,238 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 
 <div class="topbar">
   <div class="brand"><div class="brand-bar"></div>每日問題單盤點</div>
+  <button id="exportHtmlBtn" class="btn" style="background-color: #28a745; color: white;">
+        💾 下載最新網頁檔 (準備上傳)
+      </button>
   <div><button class="btn btn-ghost" onclick="openAddModal()">＋ 新增盤點日期</button></div>
 </div>
 
 <div class="mobile-sidebar-toggle" onclick="toggleMobileSidebar()">📁 展開 / 收摺歷史盤點日期</div>
 
 <aside class="sidebar" id="sidebar">
-  <div class="sidebar-inner" id="sidebarInner"></div>
+  <div class="sidebar-inner" id="sidebarInner"><div class="year-group">
+      <div class="year-toggle open" onclick="toggleYear('2026')">
+        <span class="chevron">▶</span>
+        <span class="year-label">2026</span>
+        <span class="year-count">1天</span>
+      </div>
+      <div class="months-wrap open"><div class="month-group">
+        <div class="month-toggle open" onclick="toggleMonth('2026-06')">
+          <span class="chevron">▶</span>
+          <span class="month-label">6月</span>
+          <span class="month-count">1</span>
+        </div>
+        <div class="dates-wrap open"><div class="date-item active" onclick="selectDate('2026-06-16')">
+          <span class="date-item-label">16日</span>
+          <div class="date-badges">
+            <span class="badge badge-ds">14</span>
+            <span class="badge badge-adp">11</span>
+          </div>
+        </div></div></div></div></div></div>
 </aside>
 
 <main class="main" id="main">
-  <div class="welcome" id="welcome">
+  <div class="welcome" id="welcome" style="display: none;">
     <div class="welcome-big">// 選擇日期</div>
     <div style="font-size:0.85rem;">從上方或左側點擊盤點日期，或新增一筆</div>
   </div>
-  <div id="dateView" style="display:none;"></div>
+  <div id="dateView" style="display: block;">
+    <div class="date-header">
+      <div>
+        <div class="date-big">2026/06/16</div>
+        <div class="date-sub">// 問題單盤點</div>
+      </div>
+      <div>
+        <button class="btn-danger-sm" onclick="confirmDeleteDate('2026-06-16')">🗑 刪除此日</button>
+      </div>
+    </div>
+    <div class="product-tabs">
+      <div class="product-tab active-ds" id="ptab-ds" onclick="switchProductTab('ds')">
+        <div class="product-dot ds"></div>D-Security
+        <span class="tab-badge badge-ds" id="ptab-ds-cnt">14</span>
+      </div>
+      <div class="product-tab" id="ptab-adp" onclick="switchProductTab('adp')">
+        <div class="product-dot adp"></div>ADP
+        <span class="tab-badge badge-adp" id="ptab-adp-cnt">11</span>
+      </div>
+    </div>
+    <div id="product-content">
+    <div class="section-header-row">
+      <span class="section-count" style="color:var(--accent-ds);">0/14 完成 (可拖曳排序)</span>
+    </div>
+    <div id="ticket-list-container">
+      <div class="ticket status-pending" id="tkt-ds-0" draggable="true" ondragstart="handleDragStart(event, 0)" ondragover="handleDragOver(event, 0)" ondragleave="handleDragLeave(event, 0)" ondrop="handleDrop(event, 0)" ondragend="handleDragEnd(event, 0)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14690" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14690</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',0,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',0,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-1" draggable="true" ondragstart="handleDragStart(event, 1)" ondragover="handleDragOver(event, 1)" ondragleave="handleDragLeave(event, 1)" ondrop="handleDrop(event, 1)" ondragend="handleDragEnd(event, 1)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14684" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14684</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',1,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',1,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-2" draggable="true" ondragstart="handleDragStart(event, 2)" ondragover="handleDragOver(event, 2)" ondragleave="handleDragLeave(event, 2)" ondrop="handleDrop(event, 2)" ondragend="handleDragEnd(event, 2)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14720" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14720</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',2,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',2,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-3" draggable="true" ondragstart="handleDragStart(event, 3)" ondragover="handleDragOver(event, 3)" ondragleave="handleDragLeave(event, 3)" ondrop="handleDrop(event, 3)" ondragend="handleDragEnd(event, 3)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14426" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14426</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',3,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',3,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-4" draggable="true" ondragstart="handleDragStart(event, 4)" ondragover="handleDragOver(event, 4)" ondragleave="handleDragLeave(event, 4)" ondrop="handleDrop(event, 4)" ondragend="handleDragEnd(event, 4)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14722" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14722</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',4,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',4,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-5" draggable="true" ondragstart="handleDragStart(event, 5)" ondragover="handleDragOver(event, 5)" ondragleave="handleDragLeave(event, 5)" ondrop="handleDrop(event, 5)" ondragend="handleDragEnd(event, 5)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14767" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14767</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',5,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',5,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-6" draggable="true" ondragstart="handleDragStart(event, 6)" ondragover="handleDragOver(event, 6)" ondragleave="handleDragLeave(event, 6)" ondrop="handleDrop(event, 6)" ondragend="handleDragEnd(event, 6)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14768" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14768</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',6,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',6,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-7" draggable="true" ondragstart="handleDragStart(event, 7)" ondragover="handleDragOver(event, 7)" ondragleave="handleDragLeave(event, 7)" ondrop="handleDrop(event, 7)" ondragend="handleDragEnd(event, 7)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14769" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14769</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',7,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',7,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-8" draggable="true" ondragstart="handleDragStart(event, 8)" ondragover="handleDragOver(event, 8)" ondragleave="handleDragLeave(event, 8)" ondrop="handleDrop(event, 8)" ondragend="handleDragEnd(event, 8)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14771" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14771</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',8,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',8,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-9" draggable="true" ondragstart="handleDragStart(event, 9)" ondragover="handleDragOver(event, 9)" ondragleave="handleDragLeave(event, 9)" ondrop="handleDrop(event, 9)" ondragend="handleDragEnd(event, 9)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14776" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14776</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"></span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',9,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',9,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-10" draggable="true" ondragstart="handleDragStart(event, 10)" ondragover="handleDragOver(event, 10)" ondragleave="handleDragLeave(event, 10)" ondrop="handleDrop(event, 10)" ondragend="handleDragEnd(event, 10)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14698" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14698</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"> · 與kay確認 在跟jane確認後續進度 後台設定</span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',10,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',10,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-11" draggable="true" ondragstart="handleDragStart(event, 11)" ondragover="handleDragOver(event, 11)" ondragleave="handleDragLeave(event, 11)" ondrop="handleDrop(event, 11)" ondragend="handleDragEnd(event, 11)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14735" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14735</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"> · 最後有處理完成嗎?</span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',11,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',11,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-12" draggable="true" ondragstart="handleDragStart(event, 12)" ondragover="handleDragOver(event, 12)" ondragleave="handleDragLeave(event, 12)" ondrop="handleDrop(event, 12)" ondragend="handleDragEnd(event, 12)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14701" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14701</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"> · 最後有處理完成嗎?</span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',12,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',12,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div><div class="ticket status-pending" id="tkt-ds-13" draggable="true" ondragstart="handleDragStart(event, 13)" ondragover="handleDragOver(event, 13)" ondragleave="handleDragLeave(event, 13)" ondrop="handleDrop(event, 13)" ondragend="handleDragEnd(event, 13)">
+    <div class="ticket-row1">
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ds" href="http://jira.secudocx.com/browse/CST-14563" target="_blank" rel="noopener" onclick="event.stopPropagation();">CST-14563</a>
+        <span class="ticket-status-badge pending">⏳ 尚未回覆</span>
+        <span class="ticket-note-text"> · 後續有做升級嗎?</span>
+      </div>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('ds',13,'2026-06-16')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('ds',13,'2026-06-16')" title="移除">刪除</button>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+  </div>
 </main>
 
 <div class="overlay" id="addModal">
@@ -357,8 +569,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
         <div class="single-area show" id="ds-single">
           <div class="field">
             <label>問題單連結</label>
-            <input type="text" id="ds-new-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewDate();}">
+            <input type="text" id="ds-new-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX" onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewDate();}">
           </div>
           <div class="field">
             <label>處理狀況</label>
@@ -376,7 +587,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
           <div class="batch-help">每行貼一個連結，處理狀況預設為「尚未回覆」</div>
           <div class="field">
             <label>批次貼上連結</label>
-            <textarea id="ds-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-14690&#10;http://jira.secudocx.com/browse/CST-14684&#10;…"></textarea>
+            <textarea id="ds-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-14690
+http://jira.secudocx.com/browse/CST-14684
+…"></textarea>
           </div>
         </div>
       </div>
@@ -388,8 +601,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
         <div class="single-area show" id="adp-single">
           <div class="field">
             <label>問題單連結</label>
-            <input type="text" id="adp-new-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewDate();}">
+            <input type="text" id="adp-new-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX" onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewDate();}">
           </div>
           <div class="field">
             <label>處理狀況</label>
@@ -407,7 +619,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
           <div class="batch-help">每行貼一個連結，處理狀況預設為「尚未回覆」</div>
           <div class="field">
             <label>批次貼上連結</label>
-            <textarea id="adp-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-XXXXX&#10;…"></textarea>
+            <textarea id="adp-batch-input" rows="7" placeholder="http://jira.secudocx.com/browse/CST-XXXXX
+…"></textarea>
           </div>
         </div>
       </div>
@@ -451,7 +664,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 
 <script>
 const KEY = 'daily_cst_v5';
-let data = {};
+let data = {"2026-06-16":{"ds_note":"","adp_note":"","ds":[{"url":"http://jira.secudocx.com/browse/CST-14690","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14684","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14720","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14426","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14722","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14767","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14768","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14769","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14771","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14776","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14698","status":"pending","note":"與kay確認 在跟jane確認後續進度 後台設定"},{"url":"http://jira.secudocx.com/browse/CST-14735","status":"pending","note":"最後有處理完成嗎?"},{"url":"http://jira.secudocx.com/browse/CST-14701","status":"pending","note":"最後有處理完成嗎?"},{"url":"http://jira.secudocx.com/browse/CST-14563","status":"pending","note":"後續有做升級嗎?"}],"adp":[{"url":"http://jira.secudocx.com/browse/CST-10847","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-10856","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-11268","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-11339","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13207","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13215","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13202","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13567","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-13733","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14129","status":"pending","note":""},{"url":"http://jira.secudocx.com/browse/CST-14043","status":"pending","note":""}]}};
 let currentDate = null;
 let openYears = new Set();
 let openMonths = new Set();
@@ -824,6 +1037,47 @@ openYears.add(cy); openMonths.add(`${cy}-${cm}`);
 renderSidebar();
 const dates=Object.keys(data).sort((a,b)=>b.localeCompare(a));
 if(dates.length>0) selectDate(dates[0]);
+
+
+document.getElementById('exportHtmlBtn').addEventListener('click', function() {
+    try {
+        // 1. 強制把當下記憶體裡最新的 data 變數轉為字串
+        const currentDataStr = JSON.stringify(data);
+        
+        // 2. 取得目前整份網頁的 HTML 原始碼
+        let htmlContent = document.documentElement.outerHTML;
+
+        // 3. 【核心自動化】尋找程式碼中的 let data = {...}; 或 let data = {}; 
+        //    並強行將它替換成你當前擁有的最新 24 筆（或更多）的完整盤點資料！
+        const regex = /let\s+data\s*=\s*\{[\s\S]*?\};/;
+        const newDataString = `let data = ${currentDataStr};`;
+        
+        // 執行替換
+        if (regex.test(htmlContent)) {
+            htmlContent = htmlContent.replace(regex, newDataString);
+        } else {
+            // 備用防錯方案：如果找不到該宣告，就強行塞在關鍵字前面
+            htmlContent = htmlContent.replace('let currentDate = null;', `let data = ${currentDataStr};\nlet currentDate = null;`);
+        }
+
+        // 4. 打包為全新的獨立 index.html 檔案並觸發瀏覽器下載
+        const fullHtml = "<!DOCTYPE html>\n" + htmlContent;
+        const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8;' });
+        const link = document.createElement("a");
+        
+        link.href = URL.createObjectURL(blob);
+        link.download = "index.html"; // 下載下來的檔名直接就是 index.html
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert('🎉 最新網頁已打包下載成功！\n內部已自動寫死您目前的所有盤點資料。請直接將這個 index.html 上傳到 GitHub 覆蓋舊檔即可！');
+    } catch (error) {
+        alert('下載失敗，錯誤原因：' + error.message);
+    }
+});
 </script>
-</body>
-</html>
+
+
+</body></html>
