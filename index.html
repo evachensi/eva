@@ -679,19 +679,28 @@ function toggleMobileSidebar() {
 }
 
 function loadData(){
-  try{ data = JSON.parse(localStorage.getItem(KEY)||'{}'); }catch{ data={}; }
-  if(Object.keys(data).length===0) seedData();
+  try { 
+    // 先去翻瀏覽器有沒有之前「新增/編輯過」的本地紀錄
+    let localRecord = localStorage.getItem(KEY);
+    
+    if (localRecord && localRecord !== '{}') {
+      // 如果瀏覽器本來就有使用者操作過的新紀錄，就採用本地紀錄
+      data = JSON.parse(localRecord); 
+    } else {
+      // 💡【核心關鍵】如果瀏覽器裡面是空的（比如剛開無痕、或剛清理完）
+      // 絕對不要去執行 seedData() 覆蓋資料！
+      // 而是直接採用你此時此刻寫死在程式碼最上方的 24 筆最新 data 物件！
+      persist(); // 幫你把這 24 筆直接存進瀏覽器，保護它不被洗掉
+    }
+  } catch(e) { 
+    // 如果報錯，一樣安全地不干擾原本寫死的 data
+    persist();
+  }
 }
-function persist(){ localStorage.setItem(KEY, JSON.stringify(data)); }
 
+// 📁 2. 請把原有的 seedData() 內容清空，改成這樣：
 function seedData(){
-  data['2026-06-16']={
-    ds:[
-  
-    ],
-    adp:[]
-  };
-  persist();
+  // 功成身退。為了防止它未來又調皮誤事，我們讓它保持空空的什麼都不做
 }
 
 const MONTHS_ZH=['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
