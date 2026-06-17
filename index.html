@@ -107,7 +107,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   align-items: center;
   flex: 1;
   gap: 10px;
-  flex-wrap: wrap; /* 讓內容在寬度不夠時能自動換行 */
+  flex-wrap: wrap; 
   min-width: 0;
 }
 .ticket-drag-handle:active {
@@ -193,52 +193,111 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
-/* ── 📱 手機與平板專屬響應式樣式 (Media Query) ── */
+/* ── 手機專用歷史紀錄摺疊按鈕 (預設隱藏，手機版顯示) ── */
+.mobile-sidebar-toggle {
+  display: none;
+  width: 100%;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ── 📱 手機與平板專屬響應式修正 (Media Query) ── */
 @media (max-width: 768px) {
   body {
-    grid-template-columns: 1fr; /* 斷開左右兩欄佈局，改為上下單欄式 */
-    grid-template-rows: 54px auto 1fr; /* 結構：導覽列 -> 頂部日期區 -> 內容區 */
+    grid-template-columns: 1fr; /* 切換為單欄佈局 */
+    grid-template-rows: 54px auto 1fr; 
   }
   
+  .topbar {
+    position: sticky;
+    top: 0;
+  }
+
+  .mobile-sidebar-toggle {
+    display: block; /* 手機版顯示摺疊開關 */
+  }
+
+  /* 調整側邊欄在手機上的行為，預設隱藏，點擊才拉開 */
   .sidebar {
     height: auto;
-    max-height: 200px; /* 限制手機版日期選單的高度，防止佔用整個螢幕 */
+    max-height: 0; 
+    overflow: hidden;
     position: static;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    transition: max-height 0.25s ease-out;
+  }
+  .sidebar.mobile-open {
+    max-height: 300px; /* 展開時的高度限制 */
+    overflow-y: auto;
+  }
+  .sidebar-inner {
+    overflow-y: visible; /* 釋放內部滾動卡死問題 */
   }
   
   .main {
-    padding: 16px 14px 60px; /* 縮減手機版的側邊內距，釋放更多空間給列表 */
-    height: auto;
+    padding: 16px 14px 60px; 
+    height: auto; /* 解除高度卡死 */
+    overflow-y: visible;
   }
   
+  .date-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
   .date-big {
-    font-size: 1.5rem; /* 微調小手機版的日期文字大小 */
+    font-size: 1.6rem;
+  }
+  .btn-danger-sm {
+    width: 100%;
+    text-align: center;
   }
   
-  .ticket {
-    padding: 10px;
-  }
-  
+  /* Ticket 元件重排：寬度不足時把按鈕丟到下方 */
   .ticket-row1 {
-    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
-  
+  .ticket-drag-handle {
+    width: 100%;
+  }
+  .ticket-note-text {
+    white-space: normal; /* 手機版備註文字允許換行 */
+    word-break: break-all;
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .ticket-action-group {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 8px;
+  }
   .ticket-del-btn {
-    margin-left: 0; /* 手機版按鈕排在一起，不強推到最右側 */
+    margin-left: 0;
   }
-  
+
+  /* Modal 彈窗滿版微調 */
+  .modal {
+    width: 100%;
+    max-height: 95vh;
+  }
   .modal-body {
     padding: 16px;
   }
-  
   .modal-footer {
-    padding: 10px 16px;
-  }
-  
-  .welcome {
-    padding: 40px 10px;
+    padding: 12px 16px;
   }
 }
 </style>
@@ -250,7 +309,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   <div><button class="btn btn-ghost" onclick="openAddModal()">＋ 新增盤點日期</button></div>
 </div>
 
-<aside class="sidebar">
+<div class="mobile-sidebar-toggle" onclick="toggleMobileSidebar()">📁 展開 / 收摺歷史盤點日期</div>
+
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-inner" id="sidebarInner"></div>
 </aside>
 
@@ -268,12 +329,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
       <div class="modal-title" id="addModalTitle">// 新增盤點日期</div>
     </div>
     <div class="modal-body">
-
       <div class="field">
         <label>盤點日期</label>
         <input type="date" id="m_date">
       </div>
-
       <div class="field">
         <label>選擇系統</label>
         <div class="sys-selector">
@@ -285,13 +344,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
           </div>
         </div>
       </div>
-
       <div class="modal-sys-panel active" id="add-panel-ds">
         <div class="input-mode-toggle">
           <button id="ds-mode-single" class="mode-btn active" onclick="switchMode('ds','single')">逐筆新增</button>
           <button id="ds-mode-batch" class="mode-btn" onclick="switchMode('ds','batch')">批次匯入</button>
         </div>
-
         <div class="single-area show" id="ds-single">
           <div class="field">
             <label>問題單連結</label>
@@ -310,7 +367,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
             <textarea id="ds-new-note" rows="2" placeholder="處理方式、待確認事項…"></textarea>
           </div>
         </div>
-
         <div class="batch-area hidden" id="ds-batch">
           <div class="batch-help">每行貼一個連結，處理狀況預設為「尚未回覆」</div>
           <div class="field">
@@ -319,13 +375,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
           </div>
         </div>
       </div>
-
       <div class="modal-sys-panel" id="add-panel-adp">
         <div class="input-mode-toggle">
           <button id="adp-mode-single" class="mode-btn active" onclick="switchMode('adp','single')">逐筆新增</button>
           <button id="adp-mode-batch" class="mode-btn" onclick="switchMode('adp','batch')">批次匯入</button>
         </div>
-
         <div class="single-area show" id="adp-single">
           <div class="field">
             <label>問題單連結</label>
@@ -344,7 +398,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
             <textarea id="adp-new-note" rows="2" placeholder="處理方式、待確認事項…"></textarea>
           </div>
         </div>
-
         <div class="batch-area hidden" id="adp-batch">
           <div class="batch-help">每行貼一個連結，處理狀況預設為「尚未回覆」</div>
           <div class="field">
@@ -353,7 +406,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
           </div>
         </div>
       </div>
-
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeAddModal()">取消</button>
@@ -399,14 +451,15 @@ let currentDate = null;
 let openYears = new Set();
 let openMonths = new Set();
 let activeProductTab = 'ds';
-
-// Edit state
 let editType = '', editDate = '', editIdx = -1;
-
-// Drag state
 let draggedIdx = null;
 
-// ── DATA ──────────────────────────────────────────────────
+// ── NEW: 手機版側邊欄收折控制 ─────────────────────────
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('mobile-open');
+}
+
 function loadData(){
   try{ data = JSON.parse(localStorage.getItem(KEY)||'{}'); }catch{ data={}; }
   if(Object.keys(data).length===0) seedData();
@@ -425,7 +478,6 @@ function seedData(){
   persist();
 }
 
-// ── SIDEBAR ───────────────────────────────────────────────
 const MONTHS_ZH=['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 
 function buildTree(){
@@ -489,7 +541,6 @@ function renderSidebar(){
 function toggleYear(y){ openYears.has(y)?openYears.delete(y):openYears.add(y); renderSidebar(); }
 function toggleMonth(k){ openMonths.has(k)?openMonths.delete(k):openMonths.add(k); renderSidebar(); }
 
-// ── DATE VIEW ─────────────────────────────────────────────
 function selectDate(d){
   currentDate=d;
   const[y,m]=d.split('-');
@@ -498,6 +549,8 @@ function selectDate(d){
   renderDateView();
   document.getElementById('welcome').style.display='none';
   document.getElementById('dateView').style.display='block';
+  // 選擇日期後，在手機上自動收起側邊欄以免擋住畫面
+  document.getElementById('sidebar').classList.remove('mobile-open');
 }
 
 function renderDateView(){
@@ -509,7 +562,7 @@ function renderDateView(){
         <div class="date-big">${y}/${m}/${day}</div>
         <div class="date-sub">// 問題單盤點</div>
       </div>
-      <div style="display:flex;gap:8px;">
+      <div>
         <button class="btn-danger-sm" onclick="confirmDeleteDate('${d}')">🗑 刪除此日</button>
       </div>
     </div>
@@ -551,7 +604,7 @@ function renderProductContent(){
 
   let html=`
     <div class="section-header-row">
-      <span class="section-count" style="color:${typeColor};">${done}/${tickets.length} 完成 (可滑鼠拖曳排序)</span>
+      <span class="section-count" style="color:${typeColor};">${done}/${tickets.length} 完成 (可拖曳排序)</span>
     </div>
     <div id="ticket-list-container">
       ${tickets.map((t,i)=>renderTicket(t,i,type,d)).join('')}
@@ -560,6 +613,7 @@ function renderProductContent(){
   document.getElementById('product-content').innerHTML=html;
 }
 
+// ── FIX: 調整 HTML 結構，加入 .ticket-action-group 包裹按鈕 ─────────────────────────
 function renderTicket(t,i,type,d){
   const id=extractId(t.url)||t.url;
   const sc=t.status==='done'?'done':t.status==='pending'?'pending':'none';
@@ -581,8 +635,10 @@ function renderTicket(t,i,type,d){
         <span class="ticket-status-badge ${sc}">${badgeLabel}</span>
         <span class="ticket-note-text">${esc(notePreview)}</span>
       </div>
-      <button class="ticket-edit-btn" onclick="openEditModal('${type}',${i},'${d}')">編輯</button>
-      <button class="ticket-del-btn" onclick="deleteTicket('${type}',${i},'${d}')" title="移除">刪除</button>
+      <div class="ticket-action-group">
+        <button class="ticket-edit-btn" onclick="openEditModal('${type}',${i},'${d}')">編輯</button>
+        <button class="ticket-del-btn" onclick="deleteTicket('${type}',${i},'${d}')" title="移除">刪除</button>
+      </div>
     </div>
   </div>`;
 }
@@ -593,42 +649,34 @@ function handleDragStart(e, idx) {
   e.currentTarget.classList.add('dragging');
   e.dataTransfer.effectAllowed = 'move';
 }
-
 function handleDragOver(e, idx) {
   e.preventDefault();
   if (draggedIdx === idx) return;
   e.currentTarget.classList.add('drag-over');
 }
-
 function handleDragLeave(e, idx) {
   e.currentTarget.classList.remove('drag-over');
 }
-
 function handleDrop(e, targetIdx) {
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
-  
   if (draggedIdx === null || draggedIdx === targetIdx) return;
-  
   const d = currentDate;
   const type = activeProductTab;
   const list = data[d][type];
-  
   const draggedItem = list[draggedIdx];
   list.splice(draggedIdx, 1);
   list.splice(targetIdx, 0, draggedItem);
-  
   persist();
   renderProductContent();
 }
-
 function handleDragEnd(e, idx) {
   e.currentTarget.classList.remove('dragging');
   document.querySelectorAll('.ticket').forEach(el => el.classList.remove('drag-over'));
   draggedIdx = null;
 }
 
-// ── EDIT TICKET MODAL ─────────────────────────────────────
+// ── MODAL INTERACTION ─────────────────────────────────────
 function openEditModal(type,idx,d){
   editType=type; editIdx=idx; editDate=d;
   const t=data[d][type][idx];
@@ -638,14 +686,11 @@ function openEditModal(type,idx,d){
   document.getElementById('et-note').value=t.note||'';
   document.getElementById('editTicketModal').classList.add('open');
 }
-
-// ── ADD DATE MODAL ─────────────────────────────────────────
 function openAddModal(){
   switchAddSys('ds');
   switchMode('ds','single');
   switchMode('adp','single');
   document.getElementById('addModal').classList.add('open');
-
   const d=new Date().toISOString().split('T')[0];
   document.getElementById('m_date').value=d;
   document.getElementById('m_date').disabled=false;
@@ -653,23 +698,19 @@ function openAddModal(){
   clearModalInputs('ds'); clearModalInputs('adp');
   resetBatchInputs('ds'); resetBatchInputs('adp');
 }
-
 function closeAddModal(){
   document.getElementById('addModal').classList.remove('open');
   document.getElementById('m_date').disabled=false;
 }
-
 function switchAddSys(type){
   document.getElementById('sys-btn-ds').className='sys-btn'+(type==='ds'?' active-ds':'');
   document.getElementById('sys-btn-adp').className='sys-btn'+(type==='adp'?' active-adp':'');
   document.getElementById('add-panel-ds').classList.toggle('active',type==='ds');
   document.getElementById('add-panel-adp').classList.toggle('active',type==='adp');
 }
-
 function closeEditModal(){
   document.getElementById('editTicketModal').classList.remove('open');
 }
-
 function saveEditTicket(){
   const url=document.getElementById('et-url').value.trim();
   if(!url){ alert('請輸入問題單連結'); return; }
@@ -683,20 +724,17 @@ function saveEditTicket(){
   renderProductContent();
   renderSidebar();
 }
-
 function switchMode(type,mode){
   const batch=document.getElementById(`${type}-batch`);
   const single=document.getElementById(`${type}-single`);
   const modeBatch=document.getElementById(`${type}-mode-batch`);
   const modeSingle=document.getElementById(`${type}-mode-single`);
   const isBatch=mode==='batch';
-
   if(batch) batch.className = 'batch-area' + (isBatch ? '' : ' hidden');
   if(single) single.className = 'single-area' + (!isBatch ? ' show' : '');
   if(modeBatch) modeBatch.className = 'mode-btn' + (isBatch ? ' active' : '');
   if(modeSingle) modeSingle.className = 'mode-btn' + (!isBatch ? ' active' : '');
 }
-
 function clearModalInputs(type){
   const u=document.getElementById(`${type}-new-url`);
   const s=document.getElementById(`${type}-new-status`);
@@ -705,20 +743,14 @@ function clearModalInputs(type){
   if(s)s.value='pending';
   if(n)n.value='';
 }
-
 function resetBatchInputs(type){
   const bi=document.getElementById(`${type}-batch-input`);
   if(bi)bi.value='';
 }
-
 function saveNewDate(){
   const d = document.getElementById('m_date').value;
   if(!d){ alert('請選擇日期'); return; }
-
-  if(!data[d]){
-    data[d] = { ds: [], adp: [] };
-  }
-
+  if(!data[d]){ data[d] = { ds: [], adp: [] }; }
   let addedCount = 0;
   ['ds', 'adp'].forEach(type => {
     const urlEl = document.getElementById(`${type}-new-url`);
@@ -729,7 +761,6 @@ function saveNewDate(){
       data[d][type].push({ url, status, note });
       addedCount++;
     }
-
     const batchEl = document.getElementById(`${type}-batch-input`);
     const raw = batchEl ? batchEl.value : '';
     if(raw.trim()){
@@ -743,26 +774,21 @@ function saveNewDate(){
       });
     }
   });
-
   if(addedCount === 0 && data[d].ds.length === 0 && data[d].adp.length === 0){
     alert('請輸入單筆問題單連結，或切換到批次匯入貼上連結！');
     return;
   }
-
   persist();
   closeAddModal();
   renderSidebar();
   selectDate(d);
 }
 
-// ── ACTIONS ───────────────────────────────────────────────
 function deleteTicket(type,idx,d){
   const id=extractId(data[d][type][idx].url)||'此問題單';
   if(!confirm(`確定移除 ${id}？`)) return;
-
   data[d][type].splice(idx,1);
   persist();
-
   renderDateView();
   renderSidebar();
 }
@@ -775,7 +801,6 @@ function confirmDeleteDate(d){
   document.getElementById('dateView').style.display='none';
 }
 
-// ── UTILS ─────────────────────────────────────────────────
 function extractId(url){
   if(!url) return '';
   const m=url.match(/(CST-\d+)/);
@@ -797,3 +822,4 @@ if(dates.length>0) selectDate(dates[0]);
 </script>
 </body>
 </html>
+
