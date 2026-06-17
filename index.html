@@ -95,34 +95,54 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .product-dot.adp{background:var(--accent-adp);}
 .tab-badge{font-size:0.62rem;padding:1px 5px;border-radius:3px;}
 
-/* SECTION NOTE */
-.section-note-box{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:16px;}
-.section-note-label{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;}
-.section-note{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:0.85rem;outline:none;resize:none;min-height:32px;overflow:hidden;line-height:1.6;}
-.section-note::placeholder{color:var(--text-dim);font-style:italic;}
-
 /* TICKET */
-.ticket{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:6px;}
-.ticket.status-done{border-left-color:var(--green);opacity:0.7;}
+.ticket{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:6px;user-select:none;}
+.ticket.status-done{border-left-color:var(--green);opacity:0.8;}
 .ticket.status-pending{border-left-color:var(--yellow);}
-.ticket-row1{display:flex;align-items:center;gap:8px;}
+
+/* 拖曳專用手勢與動效樣式 */
+.ticket-drag-handle {
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 10px;
+}
+.ticket-drag-handle:active {
+  cursor: grabbing;
+}
+.ticket.dragging {
+  opacity: 0.4;
+  border: 1px dashed var(--accent-ds);
+}
+.ticket.drag-over {
+  border-top: 2px dashed var(--accent-ds);
+  background: rgba(74, 158, 255, 0.05);
+}
+
+.ticket-row1{display:flex;align-items:center;width:100%;}
 .ticket-id{font-family:var(--mono);font-size:0.78rem;font-weight:600;color:var(--accent-ds);cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:underline;text-decoration-color:rgba(74,158,255,0.35);transition:text-decoration-color 0.15s;}
 .ticket-id:hover{text-decoration-color:var(--accent-ds);}
 .ticket-id.adp{color:var(--accent-adp);text-decoration-color:rgba(240,160,64,0.35);}
 .ticket-id.adp:hover{text-decoration-color:var(--accent-adp);}
-.ticket-edit-btn{font-family:var(--mono);font-size:0.62rem;padding:2px 6px;border-radius:3px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.12s;flex-shrink:0;}
-.ticket-edit-btn:hover{border-color:var(--accent-ds);color:var(--accent-ds);}
+
+/* 顯眼的編輯按鈕 */
+.ticket-edit-btn{font-family:var(--mono);font-size:0.68rem;font-weight:500;padding:3px 8px;border-radius:4px;border:1px solid rgba(74,158,255,0.4);background:rgba(74,158,255,0.08);color:var(--accent-ds);cursor:pointer;transition:all 0.12s;flex-shrink:0;margin-right:6px;}
+.ticket-edit-btn:hover{background:var(--accent-ds);color:#000;border-color:var(--accent-ds);}
+
+/* 顯眼的刪除按鈕 */
+.ticket-del-btn{margin-left:auto;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:var(--red);cursor:pointer;font-size:0.68rem;padding:3px 7px;border-radius:4px;transition:all 0.12s;flex-shrink:0;}
+.ticket-del-btn:hover{color:#000;background:var(--red);border-color:var(--red);}
+
 .ticket-status-badge{font-family:var(--mono);font-size:0.65rem;padding:2px 7px;border-radius:3px;flex-shrink:0;}
 .ticket-status-badge.done{color:var(--green);background:var(--green-bg);border:1px solid #1a4a30;}
 .ticket-status-badge.pending{color:var(--yellow);background:var(--yellow-bg);border:1px solid #3a2800;}
 .ticket-status-badge.none{color:var(--text-dim);background:var(--panel);border:1px solid var(--border);}
 .ticket-note-text{flex:1;font-family:var(--sans);font-size:0.78rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ticket-del-btn{margin-left:auto;background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:0.8rem;padding:2px 5px;border-radius:3px;transition:all 0.12s;flex-shrink:0;}
-.ticket-del-btn:hover{color:var(--red);background:var(--red-bg);}
 
 /* SECTION HEADER ROW */
-.section-header-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.section-count{font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);}
+.section-header-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:6px;}
+.section-count{font-family:var(--mono);font-size:0.72rem;font-weight:500;color:var(--text-muted);}
 
 /* ── MODAL BASE ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.18s;backdrop-filter:blur(4px);}
@@ -332,6 +352,9 @@ let activeProductTab = 'ds';
 // Edit state
 let editType = '', editDate = '', editIdx = -1;
 
+// Drag state
+let draggedIdx = null;
+
 // ── DATA ──────────────────────────────────────────────────
 function loadData(){
   try{ data = JSON.parse(localStorage.getItem(KEY)||'{}'); }catch{ data={}; }
@@ -341,7 +364,6 @@ function persist(){ localStorage.setItem(KEY, JSON.stringify(data)); }
 
 function seedData(){
   data['2026-06-16']={
-    ds_note:'', adp_note:'',
     ds:[
       {url:'http://jira.secudocx.com/browse/CST-14690',note:'',status:'pending'},
       {url:'http://jira.secudocx.com/browse/CST-14684',note:'',status:'pending'},
@@ -474,21 +496,15 @@ function renderProductContent(){
   const d=currentDate, e=data[d], type=activeProductTab;
   const tickets=e[type]||[];
   const done=tickets.filter(t=>t.status==='done').length;
-  const sectionNote=e[type+'_note']||'';
   const typeColor=type==='ds'?'var(--accent-ds)':'var(--accent-adp)';
 
   let html=`
-    <div class="section-note-box">
-      <div class="section-note-label">${type==='ds'?'D-Security':'ADP'} 整體備註</div>
-      <textarea class="section-note" rows="2"
-        placeholder="整體備註、重點追蹤方向…"
-        onchange="updateSectionNote('${type}','${d}',this.value)"
-        oninput="autoResize(this)">${esc(sectionNote)}</textarea>
-    </div>
     <div class="section-header-row">
-      <span class="section-count" style="color:${typeColor};">${done}/${tickets.length} 完成</span>
+      <span class="section-count" style="color:${typeColor};">${done}/${tickets.length} 完成 (可滑鼠拖曳排序)</span>
     </div>
-    ${tickets.map((t,i)=>renderTicket(t,i,type,d)).join('')}
+    <div id="ticket-list-container">
+      ${tickets.map((t,i)=>renderTicket(t,i,type,d)).join('')}
+    </div>
   `;
   document.getElementById('product-content').innerHTML=html;
 }
@@ -499,15 +515,68 @@ function renderTicket(t,i,type,d){
   const badgeLabel=t.status==='done'?'✅ 已完成':t.status==='pending'?'⏳ 尚未回覆':'— 未設定';
   const notePreview=t.note?` · ${t.note}`:'';
   const safeUrl=esc(t.url||'#');
-  return `<div class="ticket status-${t.status||'none'}" id="tkt-${type}-${i}">
+  
+  return `<div class="ticket status-${t.status||'none'}" 
+               id="tkt-${type}-${i}" 
+               draggable="true" 
+               ondragstart="handleDragStart(event, ${i})" 
+               ondragover="handleDragOver(event, ${i})" 
+               ondragleave="handleDragLeave(event, ${i})" 
+               ondrop="handleDrop(event, ${i})"
+               ondragend="handleDragEnd(event, ${i})">
     <div class="ticket-row1">
-      <a class="ticket-id ${type}" href="${safeUrl}" target="_blank" rel="noopener">${esc(id)}</a>
-      <span class="ticket-status-badge ${sc}">${badgeLabel}</span>
-      <span class="ticket-note-text">${esc(notePreview)}</span>
+      <div class="ticket-drag-handle">
+        <a class="ticket-id ${type}" href="${safeUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation();">${esc(id)}</a>
+        <span class="ticket-status-badge ${sc}">${badgeLabel}</span>
+        <span class="ticket-note-text">${esc(notePreview)}</span>
+      </div>
       <button class="ticket-edit-btn" onclick="openEditModal('${type}',${i},'${d}')">編輯</button>
-      <button class="ticket-del-btn" onclick="deleteTicket('${type}',${i},'${d}')" title="移除">✕</button>
+      <button class="ticket-del-btn" onclick="deleteTicket('${type}',${i},'${d}')" title="移除">刪除</button>
     </div>
   </div>`;
+}
+
+// ── DRAG & DROP LOGIC ─────────────────────────────────────
+function handleDragStart(e, idx) {
+  draggedIdx = idx;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e, idx) {
+  e.preventDefault();
+  if (draggedIdx === idx) return;
+  e.currentTarget.classList.add('drag-over');
+}
+
+function handleDragLeave(e, idx) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function handleDrop(e, targetIdx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  
+  if (draggedIdx === null || draggedIdx === targetIdx) return;
+  
+  const d = currentDate;
+  const type = activeProductTab;
+  const list = data[d][type];
+  
+  // 陣列元素位置互換互移排序
+  const draggedItem = list[draggedIdx];
+  list.splice(draggedIdx, 1);
+  list.splice(targetIdx, 0, draggedItem);
+  
+  persist();
+  renderProductContent();
+}
+
+function handleDragEnd(e, idx) {
+  e.currentTarget.classList.remove('dragging');
+  // 清除所有的 drag-over 樣式殘留
+  document.querySelectorAll('.ticket').forEach(el => el.classList.remove('drag-over'));
+  draggedIdx = null;
 }
 
 // ── EDIT TICKET MODAL ─────────────────────────────────────
@@ -566,10 +635,6 @@ function saveEditTicket(){
   renderSidebar();
 }
 
-document.getElementById('editTicketModal').addEventListener('click',function(e){
-  if(e.target===this) closeEditModal();
-});
-
 // single / batch toggle
 function switchMode(type,mode){
   const batch=document.getElementById(`${type}-batch`);
@@ -598,20 +663,16 @@ function resetBatchInputs(type){
   if(bi)bi.value='';
 }
 
-// 建立盤點邏輯：支持逐筆 + 批次匯入的絕對累加
 function saveNewDate(){
   const d = document.getElementById('m_date').value;
   if(!d){ alert('請選擇日期'); return; }
 
   if(!data[d]){
-    data[d] = { ds_note: '', adp_note: '', ds: [], adp: [] };
+    data[d] = { ds: [], adp: [] };
   }
 
   let addedCount = 0;
-
-  // 遍歷處理兩個系統
   ['ds', 'adp'].forEach(type => {
-    // 1. 抓取逐筆新增區塊的資料
     const urlEl = document.getElementById(`${type}-new-url`);
     const url = urlEl ? urlEl.value.trim() : '';
     if(url){
@@ -621,14 +682,13 @@ function saveNewDate(){
       addedCount++;
     }
 
-    // 2. 抓取批次匯入區塊的資料 (每一行都解析為一筆獨立的問題單)
     const batchEl = document.getElementById(`${type}-batch-input`);
     const raw = batchEl ? batchEl.value : '';
     if(raw.trim()){
       const lines = raw.split('\n');
       lines.forEach(line => {
         const cleanedUrl = line.trim();
-        if(cleanedUrl.startsWith('http')){ // 只要是合法的 http 連結就塞入
+        if(cleanedUrl.startsWith('http')){
           data[d][type].push({ url: cleanedUrl, status: 'pending', note: '' });
           addedCount++;
         }
@@ -647,14 +707,7 @@ function saveNewDate(){
   selectDate(d);
 }
 
-//document.getElementById('addModal').addEventListener('click',function(e){
-//  if(e.target===this) closeAddModal();
-//});
-
 // ── ACTIONS ───────────────────────────────────────────────
-function updateSectionNote(type,d,val){ data[d][type+'_note']=val; persist(); }
-function autoResize(el){ el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
-
 function deleteTicket(type,idx,d){
   const id=extractId(data[d][type][idx].url)||'此問題單';
   if(!confirm(`確定移除 ${id}？`)) return;
@@ -696,4 +749,3 @@ if(dates.length>0) selectDate(dates[0]);
 </script>
 </body>
 </html>
-
