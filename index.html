@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日問題單盤點</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e1117;
+  --panel: #161b25;
+  --panel2: #1c2333;
+  --border: #262d3d;
+  --border2: #313a50;
+  --accent-ds: #4a9eff;
+  --accent-adp: #f0a040;
+  --text: #e2e8f0;
+  --text-muted: #6b7a99;
+  --text-dim: #3d4a63;
+  --green: #34d399;
+  --green-bg: #0a2018;
+  --red: #f87171;
+  --red-bg: #1f0d0d;
+  --yellow: #fbbf24;
+  --yellow-bg: #1f1500;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Noto Sans TC', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;display:grid;grid-template-columns:260px 1fr;grid-template-rows:54px 1fr;}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50;}
+.brand{font-family:var(--mono);font-size:0.82rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px;}
+.brand-bar{width:3px;height:16px;border-radius:2px;background:linear-gradient(to bottom,var(--accent-ds),var(--accent-adp));}
+.btn{font-family:var(--mono);font-size:0.72rem;font-weight:500;padding:6px 14px;border-radius:4px;border:none;cursor:pointer;transition:all 0.15s;letter-spacing:0.02em;white-space:nowrap;}
+.btn-primary{background:var(--accent-ds);color:#000;}
+.btn-primary:hover{filter:brightness(1.15);}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--accent-ds);color:var(--accent-ds);}
+.btn-sm{padding:3px 8px;font-size:0.67rem;}
+.btn-danger-sm{background:transparent;color:var(--red);border:1px solid #3d1515;padding:3px 8px;font-size:0.67rem;font-family:var(--mono);border-radius:4px;cursor:pointer;transition:all 0.12s;}
+.btn-danger-sm:hover{background:var(--red-bg);}
+
+/* SIDEBAR */
+.sidebar{background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;height:calc(100vh - 54px);position:sticky;top:54px;display:flex;flex-direction:column;}
+.sidebar-inner{flex:1;overflow-y:auto;padding:12px 0 8px;}
+.sidebar-bottom{border-top:1px solid var(--border);padding:10px 12px;}
+
+/* SIDEBAR TREE */
+.year-group{margin-bottom:2px;}
+.year-toggle{display:flex;align-items:center;padding:8px 14px;cursor:pointer;user-select:none;transition:background 0.12s;gap:6px;}
+.year-toggle:hover{background:var(--panel2);}
+.year-label{font-family:var(--mono);font-size:0.78rem;font-weight:600;color:var(--text-muted);letter-spacing:0.06em;flex:1;}
+.year-toggle.open .year-label{color:var(--text);}
+.chevron{font-size:0.6rem;color:var(--text-dim);transition:transform 0.18s;display:inline-block;}
+.year-toggle.open .chevron{transform:rotate(90deg);}
+.year-count{font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);background:var(--panel2);padding:1px 5px;border-radius:3px;}
+.months-wrap{display:none;}
+.months-wrap.open{display:block;}
+.month-toggle{display:flex;align-items:center;padding:6px 14px 6px 24px;cursor:pointer;user-select:none;transition:background 0.12s;gap:6px;}
+.month-toggle:hover{background:var(--panel2);}
+.month-label{font-family:var(--mono);font-size:0.73rem;color:var(--text-muted);flex:1;letter-spacing:0.04em;}
+.month-toggle.open .month-label{color:var(--text);}
+.month-count{font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);}
+.dates-wrap{display:none;}
+.dates-wrap.open{display:block;}
+.date-item{display:flex;align-items:center;padding:7px 14px 7px 36px;cursor:pointer;border-left:3px solid transparent;transition:all 0.12s;gap:6px;}
+.date-item:hover{background:var(--panel2);}
+.date-item.active{background:var(--panel2);border-left-color:var(--accent-ds);}
+.date-item-label{font-family:var(--mono);font-size:0.75rem;color:var(--text-muted);flex:1;}
+.date-item.active .date-item-label{color:var(--text);}
+.date-badges{display:flex;gap:3px;}
+.badge{font-family:var(--mono);font-size:0.58rem;padding:1px 4px;border-radius:2px;font-weight:600;}
+.badge-ds{background:rgba(74,158,255,0.15);color:var(--accent-ds);}
+.badge-adp{background:rgba(240,160,64,0.15);color:var(--accent-adp);}
+
+/* MAIN */
+.main{overflow-y:auto;height:calc(100vh - 54px);padding:28px 36px 80px;}
+.welcome{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text-muted);text-align:center;}
+.welcome-big{font-family:var(--mono);font-size:1.6rem;color:var(--text-dim);font-weight:600;}
+
+/* DATE HEADER */
+.date-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:20px;flex-wrap:wrap;}
+.date-big{font-family:var(--mono);font-size:1.9rem;font-weight:600;color:var(--text);line-height:1;}
+.date-sub{font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);margin-top:4px;}
+
+/* PRODUCT TABS */
+.product-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border);}
+.product-tab{font-family:var(--mono);font-size:0.8rem;font-weight:600;padding:10px 20px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;color:var(--text-muted);display:flex;align-items:center;gap:8px;}
+.product-tab:hover{color:var(--text);}
+.product-tab.active-ds{color:var(--accent-ds);border-bottom-color:var(--accent-ds);}
+.product-tab.active-adp{color:var(--accent-adp);border-bottom-color:var(--accent-adp);}
+.product-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.product-dot.ds{background:var(--accent-ds);}
+.product-dot.adp{background:var(--accent-adp);}
+.tab-badge{font-size:0.62rem;padding:1px 5px;border-radius:3px;}
+
+/* SECTION NOTE */
+.section-note-box{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:16px;}
+.section-note-label{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;}
+.section-note{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:0.85rem;outline:none;resize:none;min-height:32px;overflow:hidden;line-height:1.6;}
+.section-note::placeholder{color:var(--text-dim);font-style:italic;}
+
+/* TICKET */
+.ticket{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:6px;}
+.ticket.status-done{border-left-color:var(--green);opacity:0.7;}
+.ticket.status-pending{border-left-color:var(--yellow);}
+.ticket-row1{display:flex;align-items:center;gap:8px;}
+.ticket-id{font-family:var(--mono);font-size:0.78rem;font-weight:600;color:var(--accent-ds);cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:underline;text-decoration-color:transparent;transition:text-decoration-color 0.15s;}
+.ticket-id:hover{text-decoration-color:var(--accent-ds);}
+.ticket-id.adp{color:var(--accent-adp);}
+.ticket-id.adp:hover{text-decoration-color:var(--accent-adp);}
+.ticket-status-badge{font-family:var(--mono);font-size:0.65rem;padding:2px 7px;border-radius:3px;flex-shrink:0;}
+.ticket-status-badge.done{color:var(--green);background:var(--green-bg);border:1px solid #1a4a30;}
+.ticket-status-badge.pending{color:var(--yellow);background:var(--yellow-bg);border:1px solid #3a2800;}
+.ticket-status-badge.none{color:var(--text-dim);background:var(--panel);border:1px solid var(--border);}
+.ticket-note-text{flex:1;font-family:var(--sans);font-size:0.78rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ticket-del-btn{margin-left:auto;background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:0.8rem;padding:2px 5px;border-radius:3px;transition:all 0.12s;flex-shrink:0;}
+.ticket-del-btn:hover{color:var(--red);background:var(--red-bg);}
+
+/* SECTION HEADER ROW */
+.section-header-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.section-count{font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);}
+
+/* ── MODAL BASE ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.18s;backdrop-filter:blur(4px);}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:10px;width:560px;max-width:95vw;max-height:92vh;display:flex;flex-direction:column;transform:translateY(10px);transition:transform 0.18s;}
+.overlay.open .modal{transform:translateY(0);}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.modal-title{font-family:var(--mono);font-size:0.85rem;font-weight:600;color:var(--text);}
+.modal-body{flex:1;overflow-y:auto;padding:20px 24px;}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;}
+
+/* SYSTEM SELECTOR in modal */
+.sys-selector{display:flex;gap:10px;margin-bottom:20px;}
+.sys-btn{flex:1;padding:14px 10px;border-radius:6px;border:2px solid var(--border2);background:var(--panel2);cursor:pointer;transition:all 0.15s;text-align:center;font-family:var(--mono);font-size:0.78rem;font-weight:600;color:var(--text-muted);}
+.sys-btn:hover{border-color:var(--border);}
+.sys-btn.active-ds{border-color:var(--accent-ds);color:var(--accent-ds);background:rgba(74,158,255,0.08);}
+.sys-btn.active-adp{border-color:var(--accent-adp);color:var(--accent-adp);background:rgba(240,160,64,0.08);}
+.sys-dot{width:8px;height:8px;border-radius:50%;margin:0 auto 6px;background:var(--border2);}
+.sys-btn.active-ds .sys-dot{background:var(--accent-ds);}
+.sys-btn.active-adp .sys-dot{background:var(--accent-adp);}
+
+/* MODAL TICKET PANEL */
+.modal-sys-panel{display:none;}
+.modal-sys-panel.active{display:block;}
+
+/* FIELD */
+.field{margin-bottom:12px;}
+.field label{display:block;font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:7px 10px;color:var(--text);font-family:var(--mono);font-size:0.78rem;outline:none;transition:border-color 0.15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent-ds);}
+.field select option{background:var(--panel);}
+.field textarea{resize:vertical;min-height:60px;font-family:var(--sans);font-size:0.83rem;}
+
+/* TICKET LIST IN MODAL (preview) */
+.modal-ticket-list{margin-top:14px;}
+.modal-ticket-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg);border:1px solid var(--border);border-radius:5px;margin-bottom:5px;}
+.modal-ticket-url{font-family:var(--mono);font-size:0.72rem;color:var(--accent-ds);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.modal-ticket-url.adp{color:var(--accent-adp);}
+.modal-ticket-badge{font-family:var(--mono);font-size:0.62rem;padding:2px 6px;border-radius:3px;flex-shrink:0;}
+.modal-ticket-del{background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:0.78rem;padding:2px 5px;border-radius:3px;transition:all 0.12s;flex-shrink:0;}
+.modal-ticket-del:hover{color:var(--red);background:var(--red-bg);}
+
+/* SEPARATOR */
+.modal-sep{border:none;border-top:1px solid var(--border);margin:16px 0;}
+
+/* EDIT TICKET MODAL */
+.edit-modal{width:480px;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><div class="brand-bar"></div>每日問題單盤點</div>
+  <div><button class="btn btn-ghost" onclick="openAddModal()">＋ 新增盤點日期</button></div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-inner" id="sidebarInner"></div>
+  <div class="sidebar-bottom">
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="openAddModal()">＋ 新增盤點日期</button>
+  </div>
+</aside>
+
+<main class="main" id="main">
+  <div class="welcome" id="welcome">
+    <div class="welcome-big">// 選擇日期</div>
+    <div style="font-size:0.85rem;">從左側點擊盤點日期，或新增一筆</div>
+  </div>
+  <div id="dateView" style="display:none;"></div>
+</main>
+
+<!-- ══ 新增盤點日期 MODAL ══ -->
+<div class="overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="addModalTitle">// 新增盤點日期</div>
+    </div>
+    <div class="modal-body">
+
+      <!-- 日期選擇 -->
+      <div class="field">
+        <label>盤點日期</label>
+        <input type="date" id="m_date">
+      </div>
+
+      <!-- 系統選擇 -->
+      <div class="field">
+        <label>選擇系統</label>
+        <div class="sys-selector">
+          <div class="sys-btn active-ds" id="sys-btn-ds" onclick="switchAddSys('ds')">
+            <div class="sys-dot"></div>D-Security (DS)
+          </div>
+          <div class="sys-btn" id="sys-btn-adp" onclick="switchAddSys('adp')">
+            <div class="sys-dot"></div>ADP
+          </div>
+        </div>
+      </div>
+
+      <!-- DS 面板 -->
+      <div class="modal-sys-panel active" id="add-panel-ds">
+        <div class="field">
+          <label>DS 整體備註（選填）</label>
+          <input type="text" id="m_ds_note" placeholder="例：今日 DS 共 14 張待回覆">
+        </div>
+        <hr class="modal-sep">
+        <div class="field">
+          <label>新增問題單連結</label>
+          <input type="text" id="ds-new-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX">
+        </div>
+        <div class="field">
+          <label>處理狀況</label>
+          <select id="ds-new-status">
+            <option value="pending">⏳ 尚未回覆</option>
+            <option value="done">✅ 已完成</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>備註說明（選填）</label>
+          <textarea id="ds-new-note" rows="2" placeholder="處理方式、待確認事項…"></textarea>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="addModalTicket('ds')">＋ 加入 DS 清單</button>
+        <div class="modal-ticket-list" id="ds-modal-list"></div>
+      </div>
+
+      <!-- ADP 面板 -->
+      <div class="modal-sys-panel" id="add-panel-adp">
+        <div class="field">
+          <label>ADP 整體備註（選填）</label>
+          <input type="text" id="m_adp_note" placeholder="例：ADP 今日共 11 張待回覆">
+        </div>
+        <hr class="modal-sep">
+        <div class="field">
+          <label>新增問題單連結</label>
+          <input type="text" id="adp-new-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX">
+        </div>
+        <div class="field">
+          <label>處理狀況</label>
+          <select id="adp-new-status">
+            <option value="pending">⏳ 尚未回覆</option>
+            <option value="done">✅ 已完成</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>備註說明（選填）</label>
+          <textarea id="adp-new-note" rows="2" placeholder="處理方式、待確認事項…"></textarea>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="addModalTicket('adp')">＋ 加入 ADP 清單</button>
+        <div class="modal-ticket-list" id="adp-modal-list"></div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAddModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveNewDate()">建立盤點</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 編輯問題單 MODAL ══ -->
+<div class="overlay" id="editTicketModal">
+  <div class="modal edit-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="editModalTitle">// 編輯問題單</div>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>問題單連結</label>
+        <input type="text" id="et-url" placeholder="http://jira.secudocx.com/browse/CST-XXXXX">
+      </div>
+      <div class="field">
+        <label>處理狀況</label>
+        <select id="et-status">
+          <option value="pending">⏳ 尚未回覆</option>
+          <option value="done">✅ 已完成</option>
+          <option value="none">— 未設定</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>備註說明</label>
+        <textarea id="et-note" rows="3" placeholder="處理方式、待確認事項…"></textarea>
+      </div>
+      <div style="margin-top:4px;">
+        <a id="et-open-link" href="#" target="_blank" style="font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);text-decoration:underline;">↗ 開啟問題單連結</a>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveEditTicket()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY = 'daily_cst_v4';
+let data = {};
+let currentDate = null;
+let openYears = new Set();
+let openMonths = new Set();
+let activeProductTab = 'ds';
+
+// Modal temp state
+let modalDs = [];
+let modalAdp = [];
+let addSys = 'ds';
+
+// Edit state
+let editType = '', editDate = '', editIdx = -1;
+
+// ── DATA ──────────────────────────────────────────────────
+function loadData(){
+  try{ data = JSON.parse(localStorage.getItem(KEY)||'{}'); }catch{ data={}; }
+  if(Object.keys(data).length===0) seedData();
+}
+function persist(){ localStorage.setItem(KEY, JSON.stringify(data)); }
+
+function seedData(){
+  data['2026-06-16']={
+    ds_note:'', adp_note:'',
+    ds:[
+      {url:'http://jira.secudocx.com/browse/CST-14690',note:'',status:'pending'},
+      {url:'http://jira.secudocx.com/browse/CST-14684',note:'',status:'pending'},
+      {url:'http://jira.secudocx.com/browse/CST-14720',note:'',status:'pending'},
+      {url:'http://jira.secudocx.com/browse/CST-14698',note:'與kay確認，再跟jane確認後續進度',status:'pending'},
+      {url:'http://jira.secudocx.com/browse/CST-14735',note:'最後有處理完成嗎?',status:'pending'},
+    ],
+    adp:[
+      {url:'http://jira.secudocx.com/browse/CST-10847',note:'',status:'pending'},
+      {url:'http://jira.secudocx.com/browse/CST-10856',note:'',status:'pending'},
+      {url:'http://jira.secudocx.com/browse/CST-11268',note:'',status:'pending'},
+    ]
+  };
+  persist();
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────
+const MONTHS_ZH=['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+function buildTree(){
+  const tree={};
+  Object.keys(data).sort((a,b)=>b.localeCompare(a)).forEach(d=>{
+    const[y,m]=d.split('-');
+    if(!tree[y])tree[y]={};
+    if(!tree[y][m])tree[y][m]=[];
+    tree[y][m].push(d);
+  });
+  return tree;
+}
+
+function renderSidebar(){
+  const tree=buildTree();
+  const years=Object.keys(tree).sort((a,b)=>b-a);
+  let html='';
+  years.forEach(y=>{
+    const months=Object.keys(tree[y]).sort((a,b)=>b-a);
+    const total=months.reduce((s,m)=>s+tree[y][m].length,0);
+    const yOpen=openYears.has(y);
+    html+=`<div class="year-group">
+      <div class="year-toggle${yOpen?' open':''}" onclick="toggleYear('${y}')">
+        <span class="chevron">▶</span>
+        <span class="year-label">${y}</span>
+        <span class="year-count">${total}天</span>
+      </div>
+      <div class="months-wrap${yOpen?' open':''}">`;
+    months.forEach(m=>{
+      const mKey=`${y}-${m}`;
+      const mOpen=openMonths.has(mKey);
+      const days=tree[y][m];
+      html+=`<div class="month-group">
+        <div class="month-toggle${mOpen?' open':''}" onclick="toggleMonth('${mKey}')">
+          <span class="chevron">▶</span>
+          <span class="month-label">${MONTHS_ZH[parseInt(m)]}</span>
+          <span class="month-count">${days.length}</span>
+        </div>
+        <div class="dates-wrap${mOpen?' open':''}">`;
+      days.sort((a,b)=>b.localeCompare(a)).forEach(d=>{
+        const e=data[d];
+        const dsCnt=(e.ds||[]).length;
+        const adpCnt=(e.adp||[]).length;
+        const dayNum=d.split('-')[2];
+        const active=currentDate===d?' active':'';
+        html+=`<div class="date-item${active}" onclick="selectDate('${d}')">
+          <span class="date-item-label">${dayNum}日</span>
+          <div class="date-badges">
+            ${dsCnt>0?`<span class="badge badge-ds">${dsCnt}</span>`:''}
+            ${adpCnt>0?`<span class="badge badge-adp">${adpCnt}</span>`:''}
+          </div>
+        </div>`;
+      });
+      html+=`</div></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('sidebarInner').innerHTML=html||'<div style="padding:12px 14px;font-size:0.75rem;color:var(--text-dim);">尚無盤點紀錄</div>';
+}
+
+function toggleYear(y){ openYears.has(y)?openYears.delete(y):openYears.add(y); renderSidebar(); }
+function toggleMonth(k){ openMonths.has(k)?openMonths.delete(k):openMonths.add(k); renderSidebar(); }
+
+// ── DATE VIEW ─────────────────────────────────────────────
+function selectDate(d){
+  currentDate=d;
+  const[y,m]=d.split('-');
+  openYears.add(y); openMonths.add(`${y}-${m}`);
+  renderSidebar();
+  renderDateView();
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('dateView').style.display='block';
+}
+
+function renderDateView(){
+  const d=currentDate, e=data[d];
+  const[y,m,day]=d.split('-');
+  document.getElementById('dateView').innerHTML=`
+    <div class="date-header">
+      <div>
+        <div class="date-big">${y}/${m}/${day}</div>
+        <div class="date-sub">// 問題單盤點</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+        <button class="btn btn-ghost btn-sm" onclick="openAddTicketModal('${d}')">＋ 新增問題單</button>
+        <button class="btn-danger-sm" onclick="confirmDeleteDate('${d}')">🗑 刪除此日</button>
+      </div>
+    </div>
+    <div class="product-tabs">
+      <div class="product-tab" id="ptab-ds" onclick="switchProductTab('ds')">
+        <div class="product-dot ds"></div>D-Security
+        <span class="tab-badge badge-ds" id="ptab-ds-cnt">${(e.ds||[]).length}</span>
+      </div>
+      <div class="product-tab" id="ptab-adp" onclick="switchProductTab('adp')">
+        <div class="product-dot adp"></div>ADP
+        <span class="tab-badge badge-adp" id="ptab-adp-cnt">${(e.adp||[]).length}</span>
+      </div>
+    </div>
+    <div id="product-content"></div>
+  `;
+  // set active tab style
+  refreshProductTabStyle();
+  renderProductContent();
+}
+
+function refreshProductTabStyle(){
+  const ds=document.getElementById('ptab-ds');
+  const adp=document.getElementById('ptab-adp');
+  if(!ds||!adp)return;
+  ds.className='product-tab'+(activeProductTab==='ds'?' active-ds':'');
+  adp.className='product-tab'+(activeProductTab==='adp'?' active-adp':'');
+}
+
+function switchProductTab(type){
+  activeProductTab=type;
+  refreshProductTabStyle();
+  renderProductContent();
+}
+
+function renderProductContent(){
+  const d=currentDate, e=data[d], type=activeProductTab;
+  const tickets=e[type]||[];
+  const done=tickets.filter(t=>t.status==='done').length;
+  const sectionNote=e[type+'_note']||'';
+  const typeColor=type==='ds'?'var(--accent-ds)':'var(--accent-adp)';
+
+  let html=`
+    <div class="section-note-box">
+      <div class="section-note-label">${type==='ds'?'D-Security':'ADP'} 整體備註</div>
+      <textarea class="section-note" rows="2"
+        placeholder="整體備註、重點追蹤方向…"
+        onchange="updateSectionNote('${type}','${d}',this.value)"
+        oninput="autoResize(this)">${esc(sectionNote)}</textarea>
+    </div>
+    <div class="section-header-row">
+      <span class="section-count" style="color:${typeColor};">${done}/${tickets.length} 完成</span>
+    </div>
+    ${tickets.map((t,i)=>renderTicket(t,i,type,d)).join('')}
+  `;
+  document.getElementById('product-content').innerHTML=html;
+}
+
+function renderTicket(t,i,type,d){
+  const id=extractId(t.url)||t.url;
+  const sc=t.status==='done'?'done':t.status==='pending'?'pending':'none';
+  const badgeLabel=t.status==='done'?'✅ 已完成':t.status==='pending'?'⏳ 尚未回覆':'— 未設定';
+  const badgeColor=t.status==='done'?'var(--green)':t.status==='pending'?'var(--yellow)':'var(--text-dim)';
+  const notePreview=t.note?` · ${t.note}`:'';
+  return `<div class="ticket status-${t.status||'none'}" id="tkt-${type}-${i}">
+    <div class="ticket-row1">
+      <span class="ticket-id ${type}" onclick="openEditModal('${type}',${i},'${d}')">${esc(id)}</span>
+      <span class="ticket-status-badge ${sc}">${badgeLabel}</span>
+      <span class="ticket-note-text">${esc(notePreview)}</span>
+      <button class="ticket-del-btn" onclick="deleteTicket('${type}',${i},'${d}')" title="移除">✕</button>
+    </div>
+  </div>`;
+}
+
+// ── EDIT TICKET MODAL ─────────────────────────────────────
+function openEditModal(type,idx,d){
+  editType=type; editIdx=idx; editDate=d;
+  const t=data[d][type][idx];
+  document.getElementById('editModalTitle').textContent=`// 編輯問題單 — ${type.toUpperCase()}`;
+  document.getElementById('et-url').value=t.url||'';
+  document.getElementById('et-status').value=t.status||'none';
+  document.getElementById('et-note').value=t.note||'';
+  const lnk=document.getElementById('et-open-link');
+  lnk.href=t.url||'#';
+  lnk.style.display=t.url?'inline':'none';
+  document.getElementById('editTicketModal').classList.add('open');
+}
+
+function closeEditModal(){
+  document.getElementById('editTicketModal').classList.remove('open');
+}
+
+function saveEditTicket(){
+  const url=document.getElementById('et-url').value.trim();
+  if(!url){ alert('請輸入問題單連結'); return; }
+  data[editDate][editType][editIdx]={
+    url,
+    status:document.getElementById('et-status').value,
+    note:document.getElementById('et-note').value.trim()
+  };
+  persist();
+  closeEditModal();
+  renderProductContent();
+  renderSidebar();
+}
+
+document.getElementById('editTicketModal').addEventListener('click',function(e){
+  if(e.target===this) closeEditModal();
+});
+
+// ── ADD TICKET from main view (quick add) ──────────────────
+let quickAddDate='';
+
+function openAddTicketModal(d){
+  quickAddDate=d;
+  // reuse addModal but pre-fill date and lock it
+  modalDs=[...(data[d].ds||[])]; // copy existing (won't duplicate — we'll only push new ones)
+  modalAdp=[...(data[d].adp||[])];
+  // Actually for quick add: open a simplified inline flow via the addModal but scoped to existing date
+  // Simpler: open editModal flow for a new blank ticket, picking type via sys switcher
+  // Let's open addModal in "append" mode
+  openAddModalForDate(d);
+}
+
+function openAddModalForDate(d){
+  modalDs=[];
+  modalAdp=[];
+  addSys='ds';
+  document.getElementById('m_date').value=d;
+  document.getElementById('m_date').disabled=true;
+  document.getElementById('addModalTitle').textContent='// 新增問題單';
+  document.getElementById('m_ds_note').value=data[d].ds_note||'';
+  document.getElementById('m_adp_note').value=data[d].adp_note||'';
+  clearModalInputs('ds'); clearModalInputs('adp');
+  renderModalList('ds'); renderModalList('adp');
+  switchAddSys('ds');
+  document.getElementById('addModal').classList.add('open');
+  document.getElementById('addModal').dataset.appendMode='1';
+}
+
+// ── ADD DATE MODAL ─────────────────────────────────────────
+function openAddModal(){
+  modalDs=[]; modalAdp=[];
+  addSys='ds';
+  const d=new Date().toISOString().split('T')[0];
+  document.getElementById('m_date').value=d;
+  document.getElementById('m_date').disabled=false;
+  document.getElementById('addModalTitle').textContent='// 新增盤點日期';
+  document.getElementById('m_ds_note').value='';
+  document.getElementById('m_adp_note').value='';
+  clearModalInputs('ds'); clearModalInputs('adp');
+  renderModalList('ds'); renderModalList('adp');
+  switchAddSys('ds');
+  document.getElementById('addModal').classList.add('open');
+  document.getElementById('addModal').dataset.appendMode='';
+}
+
+function closeAddModal(){
+  document.getElementById('addModal').classList.remove('open');
+  document.getElementById('m_date').disabled=false;
+}
+
+function switchAddSys(type){
+  addSys=type;
+  document.getElementById('sys-btn-ds').className='sys-btn'+(type==='ds'?' active-ds':'');
+  document.getElementById('sys-btn-adp').className='sys-btn'+(type==='adp'?' active-adp':'');
+  document.getElementById('add-panel-ds').classList.toggle('active',type==='ds');
+  document.getElementById('add-panel-adp').classList.toggle('active',type==='adp');
+}
+
+function clearModalInputs(type){
+  document.getElementById(`${type}-new-url`).value='';
+  document.getElementById(`${type}-new-status`).value='pending';
+  document.getElementById(`${type}-new-note`).value='';
+}
+
+function addModalTicket(type){
+  const url=document.getElementById(`${type}-new-url`).value.trim();
+  if(!url){ alert('請輸入問題單連結'); return; }
+  const status=document.getElementById(`${type}-new-status`).value;
+  const note=document.getElementById(`${type}-new-note`).value.trim();
+  const list=type==='ds'?modalDs:modalAdp;
+  list.push({url,status,note});
+  clearModalInputs(type);
+  renderModalList(type);
+}
+
+function removeModalTicket(type,idx){
+  const list=type==='ds'?modalDs:modalAdp;
+  list.splice(idx,1);
+  renderModalList(type);
+}
+
+function renderModalList(type){
+  const list=type==='ds'?modalDs:modalAdp;
+  const container=document.getElementById(`${type}-modal-list`);
+  if(list.length===0){ container.innerHTML=''; return; }
+  container.innerHTML=`<div style="font-family:var(--mono);font-size:0.62rem;color:var(--text-dim);margin:10px 0 6px;letter-spacing:0.08em;">已加入 (${list.length} 筆)</div>`+
+    list.map((t,i)=>{
+      const id=extractId(t.url)||t.url;
+      const sc=t.status==='done'?'done':'pending';
+      const label=t.status==='done'?'✅ 已完成':'⏳ 尚未回覆';
+      const color=t.status==='done'?'var(--green)':'var(--yellow)';
+      return `<div class="modal-ticket-item">
+        <span class="modal-ticket-url ${type}">${esc(id)}</span>
+        <span class="modal-ticket-badge" style="color:${color};background:var(--panel2);border:1px solid var(--border2);">${label}</span>
+        <button class="modal-ticket-del" onclick="removeModalTicket('${type}',${i})">✕</button>
+      </div>`;
+    }).join('');
+}
+
+function saveNewDate(){
+  const d=document.getElementById('m_date').value;
+  if(!d){ alert('請選擇日期'); return; }
+  const appendMode=document.getElementById('addModal').dataset.appendMode==='1';
+  const ds_note=document.getElementById('m_ds_note').value.trim();
+  const adp_note=document.getElementById('m_adp_note').value.trim();
+
+  if(appendMode){
+    // append mode: only push new tickets into existing date
+    if(!data[d]) data[d]={ds_note:'',adp_note:'',ds:[],adp:[]};
+    modalDs.forEach(t=>data[d].ds.push(t));
+    modalAdp.forEach(t=>data[d].adp.push(t));
+    if(ds_note) data[d].ds_note=ds_note;
+    if(adp_note) data[d].adp_note=adp_note;
+  } else {
+    if(data[d]&&!confirm(`${d} 已有紀錄，確定覆蓋？`)) return;
+    data[d]={ds_note,adp_note,ds:[...modalDs],adp:[...modalAdp]};
+  }
+
+  persist();
+  closeAddModal();
+  renderSidebar();
+  selectDate(d);
+}
+
+document.getElementById('addModal').addEventListener('click',function(e){
+  if(e.target===this) closeAddModal();
+});
+
+// ── ACTIONS ───────────────────────────────────────────────
+function updateSectionNote(type,d,val){ data[d][type+'_note']=val; persist(); }
+function autoResize(el){ el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+
+function deleteTicket(type,idx,d){
+  const id=extractId(data[d][type][idx].url)||'此問題單';
+  if(!confirm(`確定移除 ${id}？`)) return;
+  data[d][type].splice(idx,1);
+  persist();
+  renderProductContent();
+  renderSidebar();
+}
+
+function confirmDeleteDate(d){
+  if(!confirm(`確定刪除 ${d} 的盤點紀錄？`)) return;
+  delete data[d]; persist(); currentDate=null;
+  renderSidebar();
+  document.getElementById('welcome').style.display='flex';
+  document.getElementById('dateView').style.display='none';
+}
+
+// ── UTILS ─────────────────────────────────────────────────
+function extractId(url){
+  if(!url) return '';
+  const m=url.match(/(CST-\d+)/);
+  return m?m[1]:url;
+}
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+loadData();
+const today=new Date();
+const cy=String(today.getFullYear());
+const cm=String(today.getMonth()+1).padStart(2,'0');
+openYears.add(cy); openMonths.add(`${cy}-${cm}`);
+renderSidebar();
+const dates=Object.keys(data).sort((a,b)=>b.localeCompare(a));
+if(dates.length>0) selectDate(dates[0]);
+</script>
+</body>
+</html>
